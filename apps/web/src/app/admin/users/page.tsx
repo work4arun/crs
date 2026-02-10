@@ -1,0 +1,177 @@
+"use client";
+
+import { useEffect, useState, useCallback } from "react";
+import axios from "axios";
+import { useAuth } from "@/context/auth-context";
+import { Trash2, UserPlus } from "lucide-react";
+
+export default function UserManagementPage() {
+    const { token } = useAuth();
+    const storedToken = typeof window !== 'undefined' ? localStorage.getItem('token') : null;
+
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    const [users, setUsers] = useState<any[]>([]);
+    const [showModal, setShowModal] = useState(false);
+
+    const [formData, setFormData] = useState({
+        email: "",
+        password: "",
+        role: "MANAGER"
+    });
+
+    const roles = ["MANAGER", "HOD", "TUTOR", "SUPER_ADMIN"];
+
+    const fetchUsers = useCallback(async () => {
+        try {
+            const token = localStorage.getItem('token');
+            const res = await axios.get('http://localhost:3001/users', {
+                headers: { Authorization: `Bearer ${token}` }
+            });
+            setUsers(res.data);
+        } catch (err: unknown) {
+            console.error(err);
+        }
+    }, []);
+
+    useEffect(() => {
+        fetchUsers(); // eslint-disable-line
+    }, [fetchUsers]);
+
+    const handleDelete = async (id: string) => {
+        if (!confirm("Are you sure you want to delete this user?")) return;
+        try {
+            await axios.delete(`http://localhost:3001/users/${id}`, {
+                headers: { Authorization: `Bearer ${token || storedToken}` }
+            });
+            setUsers(users.filter(u => u.id !== id));
+        } catch {
+            alert("Failed to delete user");
+        }
+    };
+
+    const handleSubmit = async (e: React.FormEvent) => {
+        e.preventDefault();
+        try {
+            const res = await axios.post("http://localhost:3001/users", formData, {
+                headers: { Authorization: `Bearer ${token || storedToken}` }
+            });
+            setUsers([res.data, ...users]);
+            setShowModal(false);
+            setFormData({ email: "", password: "", role: "MANAGER" });
+        } catch {
+            alert("Failed to create user");
+        }
+    };
+
+    return (
+        <div className="p-8 space-y-8">
+            <div className="flex justify-between items-center">
+                <div>
+                    <h2 className="text-3xl font-black text-slate-800 tracking-tight">User Management</h2>
+                    <p className="text-slate-500 mt-1">Manage system access for Managers, HODs, and Tutors.</p>
+                </div>
+                <button
+                    onClick={() => setShowModal(true)}
+                    className="flex items-center gap-2 bg-indigo-600 text-white px-4 py-2 rounded-lg hover:bg-indigo-700 transition-colors font-semibold"
+                >
+                    <UserPlus size={18} />
+                    Add User
+                </button>
+            </div>
+
+            <div className="bg-white rounded-xl shadow-sm border border-slate-200 overflow-hidden">
+                <table className="w-full text-left">
+                    <thead className="bg-slate-50 border-b border-slate-200">
+                        <tr>
+                            <th className="p-4 font-semibold text-slate-600 text-sm uppercase">Email</th>
+                            <th className="p-4 font-semibold text-slate-600 text-sm uppercase">Role</th>
+                            <th className="p-4 font-semibold text-slate-600 text-sm uppercase text-right">Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody className="divide-y divide-slate-100">
+                        {users.map((user) => (
+                            <tr key={user.id} className="hover:bg-slate-50/50">
+                                <td className="p-4 font-medium text-slate-800">{user.email}</td>
+                                <td className="p-4">
+                                    <span className={`inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-bold border ${user.role === 'SUPER_ADMIN' ? 'bg-purple-50 text-purple-700 border-purple-200' :
+                                        user.role === 'MANAGER' ? 'bg-blue-50 text-blue-700 border-blue-200' :
+                                            user.role === 'HOD' ? 'bg-emerald-50 text-emerald-700 border-emerald-200' :
+                                                'bg-slate-100 text-slate-600 border-slate-200'
+                                        }`}>
+                                        {user.role}
+                                    </span>
+                                </td>
+                                <td className="p-4 text-right">
+                                    <button
+                                        onClick={() => handleDelete(user.id)}
+                                        className="text-slate-400 hover:text-red-600 transition-colors"
+                                    >
+                                        <Trash2 size={18} />
+                                    </button>
+                                </td>
+                            </tr>
+                        ))}
+                    </tbody>
+                </table>
+            </div>
+
+            {/* Modal */}
+            {showModal && (
+                <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/50 backdrop-blur-sm">
+                    <div className="bg-white rounded-xl shadow-2xl w-full max-w-md p-6 animate-in fade-in zoom-in duration-200">
+                        <h3 className="text-xl font-bold text-slate-900 mb-4">Create New User</h3>
+                        <form onSubmit={handleSubmit} className="space-y-4">
+                            <div>
+                                <label className="block text-sm font-bold text-slate-700 mb-1">Email</label>
+                                <input
+                                    type="email"
+                                    required
+                                    value={formData.email}
+                                    onChange={e => setFormData({ ...formData, email: e.target.value })}
+                                    className="w-full rounded-lg border-slate-300 focus:ring-indigo-500 focus:border-indigo-500"
+                                    placeholder="user@rathinam.in"
+                                />
+                            </div>
+                            <div>
+                                <label className="block text-sm font-bold text-slate-700 mb-1">Password</label>
+                                <input
+                                    type="password"
+                                    required
+                                    value={formData.password}
+                                    onChange={e => setFormData({ ...formData, password: e.target.value })}
+                                    className="w-full rounded-lg border-slate-300 focus:ring-indigo-500 focus:border-indigo-500"
+                                    placeholder="••••••••"
+                                />
+                            </div>
+                            <div>
+                                <label className="block text-sm font-bold text-slate-700 mb-1">Role</label>
+                                <select
+                                    value={formData.role}
+                                    onChange={e => setFormData({ ...formData, role: e.target.value })}
+                                    className="w-full rounded-lg border-slate-300 focus:ring-indigo-500 focus:border-indigo-500"
+                                >
+                                    {roles.map(r => <option key={r} value={r}>{r}</option>)}
+                                </select>
+                            </div>
+                            <div className="flex gap-3 pt-4">
+                                <button
+                                    type="button"
+                                    onClick={() => setShowModal(false)}
+                                    className="flex-1 px-4 py-2 rounded-lg border border-slate-200 text-slate-600 font-semibold hover:bg-slate-50"
+                                >
+                                    Cancel
+                                </button>
+                                <button
+                                    type="submit"
+                                    className="flex-1 px-4 py-2 rounded-lg bg-indigo-600 text-white font-bold hover:bg-indigo-700"
+                                >
+                                    Create User
+                                </button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            )}
+        </div>
+    );
+}

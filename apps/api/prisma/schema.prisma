@@ -1,0 +1,247 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+enum Role {
+  SUPER_ADMIN
+  MANAGER
+  HOD
+  TUTOR
+  STUDENT
+  PARENT
+}
+
+enum Severity {
+  LOW
+  MEDIUM
+  HIGH
+  CRITICAL
+}
+
+model ViolationType {
+  id        String   @id @default(uuid())
+  name      String   @unique
+  penalty   Float    // Points to deduct
+  severity  Severity @default(LOW)
+  
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  
+  records   StudentViolation[]
+}
+
+model User {
+  id        String   @id @default(uuid())
+  email     String   @unique
+  password  String
+  role      Role     @default(STUDENT)
+  
+  resetToken       String?
+  resetTokenExpiry DateTime?
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  
+  recordedScores Score[]
+  recordedViolations StudentViolation[]
+  sessions       Session[]
+  notifications  Notification[]
+  student        Student?
+  
+  // Relations for Roles
+  managedSubParams SubParameter[] @relation("ManagerSubParams")
+  tutoredStudents  Student[]      @relation("TutorStudents")
+}
+
+model Session {
+  id        String   @id @default(uuid())
+  userId    String
+  token     String   @unique
+  expiresAt DateTime
+  createdAt DateTime @default(now())
+  
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+}
+
+model Student {
+  id             String   @id @default(uuid())
+  registerNumber String   @unique
+  name           String
+  department     String
+  section        String?
+  batch          String
+  email          String   @unique
+  whatsappNumber String?
+  qrCode         String   @unique @default(uuid())
+  profilePhoto   String?
+  
+  userId         String?  @unique
+  user           User?    @relation(fields: [userId], references: [id])
+  
+  tutorId        String?
+  tutor          User?    @relation("TutorStudents", fields: [tutorId], references: [id])
+
+  scores         Score[]
+  violations     StudentViolation[]
+  crsHistory     CrsHistory[]
+  
+  currentCrs     Float    @default(1000)
+
+  createdAt      DateTime @default(now())
+  updatedAt      DateTime @updatedAt
+}
+
+model Parameter {
+  id          String   @id @default(uuid())
+  name        String   @unique
+  description String?
+  weightage   Float    // Percentage (e.g., 30.0 for 30%)
+  maxScore    Float
+
+  subParameters SubParameter[]
+
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+}
+
+enum ScoringMode {
+  ACCUMULATIVE
+  DEDUCTION
+}
+
+
+enum CalculationMode {
+  SUM        // Add all scores together (e.g. Volunteering Hours)
+  LATEST     // Use only the most recent score (e.g. CGPA, Exam)
+  AVERAGE    // Average of all scores (e.g. Daily Quiz)
+  MAX        // Best score ever achieved
+}
+
+model SubParameter {
+  id          String   @id @default(uuid())
+  name        String
+  description String?
+  weightage   Float
+  maxScore    Float
+  
+  scoringMode    ScoringMode @default(ACCUMULATIVE)
+  calculationMode CalculationMode @default(SUM) // Default to SUM for backward compatibility with "Cumulative" mental model? Or LATEST? 
+                                                // Current logic was "find first", which is arbitrary.
+                                                // Let's default to LATEST as it's safer for "corrections" if users don't know.
+                                                // Actually, user asked for "Cumulative Average".
+                                                // Let's Default to LATEST. 
+
+  deductionValue Float?      // For DEDUCTION mode: Points to deduct per violation
+  minScore       Float?      // For DEDUCTION mode: Lowest possible score (e.g. 0)
+
+  mappedManagerId String?
+  mappedManager   User?   @relation("ManagerSubParams", fields: [mappedManagerId], references: [id])
+
+  parameterId String
+  parameter   Parameter @relation(fields: [parameterId], references: [id], onDelete: Cascade)
+
+  formTemplate FormTemplate?
+  scores      Score[]
+
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+}
+
+
+model FormTemplate {
+  id        String   @id @default(uuid())
+  name      String
+  schema    Json     // Stores field definitions: [{ label, type, required, options }]
+  
+  subParameterId String @unique
+  subParameter   SubParameter @relation(fields: [subParameterId], references: [id], onDelete: Cascade)
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model Score {
+  id            String   @id @default(uuid())
+  obtainedScore Float
+  data          Json?    // Stores form responses
+
+  studentId     String
+  student       Student  @relation(fields: [studentId], references: [id], onDelete: Cascade)
+
+  subParameterId String
+  subParameter   SubParameter @relation(fields: [subParameterId], references: [id], onDelete: Cascade)
+
+  recordedById  String
+  recordedBy    User     @relation(fields: [recordedById], references: [id])
+
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
+}
+
+model StudentViolation {
+  id              String   @id @default(uuid())
+  
+  studentId       String
+  student         Student  @relation(fields: [studentId], references: [id], onDelete: Cascade)
+
+  violationTypeId String
+  violationType   ViolationType @relation(fields: [violationTypeId], references: [id])
+
+  recordedById    String
+  recordedBy      User     @relation(fields: [recordedById], references: [id])
+
+  comments        String?
+  
+  createdAt       DateTime @default(now())
+}
+
+model AuditLog {
+  id          String   @id @default(uuid())
+  userId      String?
+  action      String
+  resource    String
+  resourceId  String?
+  details     Json?
+  ipAddress   String?
+  createdAt   DateTime @default(now())
+}
+
+model DashboardConfig {
+  id          String   @id @default(uuid())
+  name        String
+  role        Role
+  layout      Json
+  isActive    Boolean  @default(true)
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+}
+
+model CrsHistory {
+  id            String   @id @default(uuid())
+  studentId     String
+  student       Student  @relation(fields: [studentId], references: [id], onDelete: Cascade)
+  changeAmount  Float
+  reason        String
+  previousScore Float
+  newScore      Float
+  createdAt     DateTime @default(now())
+}
+
+model Notification {
+  id        String   @id @default(uuid())
+  userId    String
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  title     String
+  message   String
+  type      String   // INFO, WARNING, SUCCESS, ERROR
+  isRead    Boolean  @default(false)
+  createdAt DateTime @default(now())
+}

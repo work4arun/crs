@@ -1,0 +1,2 @@
+-- AlterTable
+ALTER TABLE "Student" ADD COLUMN     "currentCrs" DOUBLE PRECISION NOT NULL DEFAULT 1000;

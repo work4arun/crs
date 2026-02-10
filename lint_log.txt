@@ -1,0 +1,108 @@
+
+> web@0.1.0 lint
+> eslint
+
+
+/Users/arun/Desktop/growthcardv1/apps/web/src/app/admin/audit/page.tsx
+   5:19  warning  'Search' is defined but never used                                                                            @typescript-eslint/no-unused-vars
+   5:27  warning  'User' is defined but never used                                                                              @typescript-eslint/no-unused-vars
+   5:33  warning  'Shield' is defined but never used                                                                            @typescript-eslint/no-unused-vars
+   5:41  warning  'Info' is defined but never used                                                                              @typescript-eslint/no-unused-vars
+  13:14  error    Unexpected any. Specify a different type                                                                      @typescript-eslint/no-explicit-any
+  25:8   warning  React Hook useEffect has a missing dependency: 'fetchLogs'. Either include it or remove the dependency array  react-hooks/exhaustive-deps
+
+/Users/arun/Desktop/growthcardv1/apps/web/src/app/admin/dashboard/page.tsx
+   11:40  error  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  105:62  error  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  127:59  error  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  162:65  error  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  187:68  error  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+
+/Users/arun/Desktop/growthcardv1/apps/web/src/app/admin/users/page.tsx
+   6:28  warning  'Shield' is defined but never used                                                                             @typescript-eslint/no-unused-vars
+   6:36  warning  'Users' is defined but never used                                                                              @typescript-eslint/no-unused-vars
+  12:40  error    Unexpected any. Specify a different type                                                                       @typescript-eslint/no-explicit-any
+  13:12  warning  'loading' is assigned a value but never used                                                                   @typescript-eslint/no-unused-vars
+  26:8   warning  React Hook useEffect has a missing dependency: 'fetchUsers'. Either include it or remove the dependency array  react-hooks/exhaustive-deps
+  48:18  warning  'err' is defined but never used                                                                                @typescript-eslint/no-unused-vars
+  62:18  warning  'err' is defined but never used                                                                                @typescript-eslint/no-unused-vars
+
+/Users/arun/Desktop/growthcardv1/apps/web/src/app/admin/violations/page.tsx
+  36:23  error    Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  65:23  error    Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  78:18  warning  'err' is defined but never used           @typescript-eslint/no-unused-vars
+  78:23  error    Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+
+/Users/arun/Desktop/growthcardv1/apps/web/src/app/auth/forgot-password/page.tsx
+  12:11  warning  'router' is assigned a value but never used  @typescript-eslint/no-unused-vars
+  21:25  error    Unexpected any. Specify a different type     @typescript-eslint/no-explicit-any
+
+/Users/arun/Desktop/growthcardv1/apps/web/src/app/auth/reset-password/page.tsx
+  40:25  error  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+
+/Users/arun/Desktop/growthcardv1/apps/web/src/app/dashboard/[id]/page.tsx
+  10:48  error    Unexpected any. Specify a different type                                                                                  @typescript-eslint/no-explicit-any
+  11:40  error    Unexpected any. Specify a different type                                                                                  @typescript-eslint/no-explicit-any
+  17:8   warning  React Hook useEffect has a missing dependency: 'fetchDashboardAndData'. Either include it or remove the dependency array  react-hooks/exhaustive-deps
+  43:23  error    Unexpected any. Specify a different type                                                                                  @typescript-eslint/no-explicit-any
+
+/Users/arun/Desktop/growthcardv1/apps/web/src/app/login/page.tsx
+  37:23  error  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+
+/Users/arun/Desktop/growthcardv1/apps/web/src/app/manager/entry/page.tsx
+   19:17   error    Unexpected any. Specify a different type                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                              @typescript-eslint/no-explicit-any
+   27:44   error    Unexpected any. Specify a different type                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                              @typescript-eslint/no-explicit-any
+   34:46   error    Unexpected any. Specify a different type                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                              @typescript-eslint/no-explicit-any
+   38:9    error    Error: Cannot access variable before it is declared
+
+`fetchParameters` is accessed before it is declared, which prevents the earlier access from updating when this value changes over time.
+
+/Users/arun/Desktop/growthcardv1/apps/web/src/app/manager/entry/page.tsx:38:9
+  36 |
+  37 |     useEffect(() => {
+> 38 |         fetchParameters();
+     |         ^^^^^^^^^^^^^^^ `fetchParameters` accessed before it is declared
+  39 |     }, []);
+  40 |
+  41 |     useEffect(() => {
+
+/Users/arun/Desktop/growthcardv1/apps/web/src/app/manager/entry/page.tsx:51:5
+  49 |     }, [selectedParam, selectedSubParam, parameters]);
+  50 |
+> 51 |     const fetchParameters = async () => {
+     |     ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+> 52 |         try {
+     | ^^^^^^^^^^^^^
+> 53 |             const token = localStorage.getItem("token");
+     …
+     | ^^^^^^^^^^^^^
+> 60 |         }
+     | ^^^^^^^^^^^^^
+> 61 |     };
+     | ^^^^^^^ `fetchParameters` is declared here
+  62 |
+  63 |     const handleSubmit = async (e: React.FormEvent) => {
+  64 |         e.preventDefault();  react-hooks/immutability
+   86:25   error    Unexpected any. Specify a different type                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                              @typescript-eslint/no-explicit-any
+  130:29   error    Unexpected any. Specify a different type                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                              @typescript-eslint/no-explicit-any
+  238:84   error    Unexpected any. Specify a different type                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                              @typescript-eslint/no-explicit-any
+  240:48   warning  'data' is defined but never used                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                      @typescript-eslint/no-unused-vars
+  266:63   error    Unexpected any. Specify a different type                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                              @typescript-eslint/no-explicit-any
+  281:112  error    `"` can be escaped with `&quot;`, `&ldquo;`, `&#34;`, `&rdquo;`                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                       react/no-unescaped-entities
+  281:120  error    `"` can be escaped with `&quot;`, `&ldquo;`, `&#34;`, `&rdquo;`                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                       react/no-unescaped-entities
+  281:123  error    `"` can be escaped with `&quot;`, `&ldquo;`, `&#34;`, `&rdquo;`                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                       react/no-unescaped-entities
+  281:132  error    `"` can be escaped with `&quot;`, `&ldquo;`, `&#34;`, `&rdquo;`                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                       react/no-unescaped-entities
+
+/Users/arun/Desktop/growthcardv1/apps/web/src/components/notification-center.tsx
+  38:9  warning  Unused eslint-disable directive (no problems were reported from 'react-hooks/exhaustive-deps')
+
+✖ 44 problems (28 errors, 16 warnings)
+  0 errors and 1 warning potentially fixable with the `--fix` option.
+
+npm error Lifecycle script `lint` failed with error:
+npm error code 1
+npm error path /Users/arun/Desktop/growthcardv1/apps/web
+npm error workspace web@0.1.0
+npm error location /Users/arun/Desktop/growthcardv1/apps/web
+npm error command failed
+npm error command sh -c eslint
