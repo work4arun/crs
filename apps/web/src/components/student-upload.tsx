@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import axios from "axios";
+import { API_URL } from "@/config";
 import { useAuth } from "@/context/auth-context";
 
 export function StudentUpload() {
@@ -27,7 +28,7 @@ export function StudentUpload() {
 
         try {
             const storedToken = localStorage.getItem('token'); // Fallback if context doesn't have it directly exposed
-            await axios.post("http://localhost:3001/students/upload", formData, {
+            await axios.post(`${API_URL}/students/upload`, formData, {
                 headers: {
                     "Content-Type": "multipart/form-data",
                     Authorization: `Bearer ${token || storedToken}`,

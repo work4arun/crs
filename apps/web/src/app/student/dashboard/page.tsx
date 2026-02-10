@@ -2,6 +2,7 @@
 
 import { useEffect, useState, useRef, useCallback } from "react";
 import axios from "axios";
+import { API_URL } from "@/config";
 import { useAuth } from "@/context/auth-context";
 import {
   LogOut, Star, Camera, Trophy, AlertTriangle, Rocket, TrendingUp, Printer
@@ -124,7 +125,7 @@ export default function StudentDashboard() {
   const fetchDashboard = useCallback(async () => {
     try {
       const storedToken = localStorage.getItem('token');
-      const res = await axios.get("http://localhost:3001/students/me/dashboard", {
+      const res = await axios.get(`${API_URL}/students/me/dashboard`, {
         headers: { Authorization: `Bearer ${token || storedToken}` }
       });
       setData(res.data);
@@ -158,7 +159,7 @@ export default function StudentDashboard() {
 
     setUploading(true);
     try {
-      await axios.post("http://localhost:3001/students/me/photo", formData, {
+      await axios.post(`${API_URL}/students/me/photo`, formData, {
         headers: {
           Authorization: `Bearer ${token || storedToken}`,
           'Content-Type': 'multipart/form-data'
@@ -229,7 +230,7 @@ export default function StudentDashboard() {
                   </div>
                 )}
                 <Image
-                  src={data.student.profilePhoto ? `http://localhost:3001${data.student.profilePhoto}` : `https://api.dicebear.com/7.x/initials/svg?seed=${data.student.name}`}
+                  src={data.student.profilePhoto ? `${API_URL}${data.student.profilePhoto}` : `https://api.dicebear.com/7.x/initials/svg?seed=${data.student.name}`}
                   alt="Profile"
                   width={144}
                   height={144}

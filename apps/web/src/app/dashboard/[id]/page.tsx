@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from "react";
 import axios from "axios";
+import { API_URL } from "@/config";
 import { DashboardRenderer } from "@/components/widgets/dashboard-renderer";
 import { useParams } from "next/navigation";
 
@@ -20,14 +21,14 @@ export default function DashboardViewer() {
                 const token = localStorage.getItem("token");
 
                 // 1. Fetch Dashboard Layout
-                const dashRes = await axios.get(`http://localhost:3001/dashboards/${id}`, {
+                const dashRes = await axios.get(`${API_URL}/dashboards/${id}`, {
                     headers: { Authorization: `Bearer ${token}` }
                 });
                 setDashboard(dashRes.data);
 
                 // 2. Fetch Data (Optimized: only fetch if needed, but for now fetch generic admin stats)
                 // In a real app, we might have specific endpoints based on Dashboard Role
-                const statsRes = await axios.get("http://localhost:3001/analytics/admin/stats", {
+                const statsRes = await axios.get(`${API_URL}/analytics/admin/stats`, {
                     headers: { Authorization: `Bearer ${token}` }
                 });
 

@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from "react";
 import axios from "axios";
+import { API_URL } from "@/config";
 import { useAuth } from "@/context/auth-context";
 import { Loader2, Printer } from "lucide-react";
 import Image from "next/image";
@@ -57,7 +58,7 @@ export default function StudentReportPage() {
                 const authToken = token || storedToken;
                 if (!authToken) return;
 
-                const res = await axios.get("http://localhost:3001/students/me/dashboard", {
+                const res = await axios.get(`${API_URL}/students/me/dashboard`, {
                     headers: { Authorization: `Bearer ${authToken}` }
                 });
                 setData(res.data);

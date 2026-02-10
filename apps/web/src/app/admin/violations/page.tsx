@@ -2,6 +2,7 @@
 
 import { useState, useEffect } from "react";
 import axios from "axios";
+import { API_URL } from "@/config";
 
 interface ViolationType {
     id: string;
@@ -29,7 +30,7 @@ export default function ViolationsPage() {
     const fetchViolations = async () => {
         try {
             const token = localStorage.getItem("token");
-            const res = await axios.get("http://localhost:3001/violations", {
+            const res = await axios.get(`${API_URL}/violations`, {
                 headers: { Authorization: `Bearer ${token}` },
             });
             setViolations(res.data);
@@ -52,11 +53,11 @@ export default function ViolationsPage() {
 
         try {
             if (isEditing && editId) {
-                await axios.patch(`http://localhost:3001/violations/${editId}`, data, {
+                await axios.patch(`${API_URL}/violations/${editId}`, data, {
                     headers: { Authorization: `Bearer ${token}` },
                 });
             } else {
-                await axios.post("http://localhost:3001/violations", data, {
+                await axios.post(`${API_URL}/violations`, data, {
                     headers: { Authorization: `Bearer ${token}` },
                 });
             }
@@ -72,7 +73,7 @@ export default function ViolationsPage() {
         if (!confirm("Are you sure you want to delete this violation type?")) return;
         try {
             const token = localStorage.getItem("token");
-            await axios.delete(`http://localhost:3001/violations/${id}`, {
+            await axios.delete(`${API_URL}/violations/${id}`, {
                 headers: { Authorization: `Bearer ${token}` },
             });
             fetchViolations();

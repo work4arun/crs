@@ -2,6 +2,7 @@
 
 import { useEffect, useState, useCallback } from "react";
 import axios from "axios";
+import { API_URL } from "@/config";
 import { useAuth } from "@/context/auth-context";
 import { Trash2, UserPlus } from "lucide-react";
 
@@ -24,7 +25,7 @@ export default function UserManagementPage() {
     const fetchUsers = useCallback(async () => {
         try {
             const token = localStorage.getItem('token');
-            const res = await axios.get('http://localhost:3001/users', {
+            const res = await axios.get(`${API_URL}/users`, {
                 headers: { Authorization: `Bearer ${token}` }
             });
             setUsers(res.data);
@@ -40,7 +41,7 @@ export default function UserManagementPage() {
     const handleDelete = async (id: string) => {
         if (!confirm("Are you sure you want to delete this user?")) return;
         try {
-            await axios.delete(`http://localhost:3001/users/${id}`, {
+            await axios.delete(`${API_URL}/users/${id}`, {
                 headers: { Authorization: `Bearer ${token || storedToken}` }
             });
             setUsers(users.filter(u => u.id !== id));
@@ -52,7 +53,7 @@ export default function UserManagementPage() {
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
         try {
-            const res = await axios.post("http://localhost:3001/users", formData, {
+            const res = await axios.post(`${API_URL}/users`, formData, {
                 headers: { Authorization: `Bearer ${token || storedToken}` }
             });
             setUsers([res.data, ...users]);

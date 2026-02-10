@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import axios from "axios";
+import { API_URL } from "@/config";
 import { WIDGET_REGISTRY, WidgetConfig } from "@/components/widgets/registry";
 import { Plus, Save, Trash } from "lucide-react";
 
@@ -32,7 +33,7 @@ export default function DashboardBuilder() {
         setSaving(true);
         try {
             const token = localStorage.getItem("token");
-            await axios.post("http://localhost:3001/dashboards", {
+            await axios.post(`${API_URL}/dashboards`, {
                 name,
                 role,
                 layout

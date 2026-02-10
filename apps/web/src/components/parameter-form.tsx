@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import axios from "axios";
+import { API_URL } from "@/config";
 import { useAuth } from "@/context/auth-context";
 
 interface ParameterFormProps {
@@ -24,7 +25,7 @@ export function ParameterForm({ onSuccess }: ParameterFormProps) {
 
         try {
             const storedToken = localStorage.getItem('token');
-            await axios.post("http://localhost:3001/parameters", {
+            await axios.post(`${API_URL}/parameters`, {
                 name,
                 description,
                 weightage: parseFloat(weightage),

@@ -2,6 +2,7 @@
 
 import { useState, useEffect } from "react";
 import axios from "axios";
+import { API_URL } from "@/config";
 
 interface Student {
     id: string;
@@ -42,7 +43,7 @@ export function StudentSelector({ onSelect }: StudentSelectorProps) {
         setLoading(true);
         try {
             const token = localStorage.getItem("token");
-            const res = await axios.get("http://localhost:3001/students", {
+            const res = await axios.get(`${API_URL}/students`, {
                 headers: { Authorization: `Bearer ${token}` },
             });
             setStudents(res.data);

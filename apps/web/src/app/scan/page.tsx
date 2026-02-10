@@ -2,6 +2,7 @@
 
 import { useState, useEffect } from "react";
 import axios from "axios";
+import { API_URL } from "@/config";
 import { QRScanner } from "@/components/qr-scanner";
 
 interface Student {
@@ -39,7 +40,7 @@ export default function RecordViolationPage() {
     const fetchViolationTypes = async () => {
         try {
             const token = localStorage.getItem("token");
-            const res = await axios.get("http://localhost:3001/violations", {
+            const res = await axios.get(`${API_URL}/violations`, {
                 headers: { Authorization: `Bearer ${token}` }
             });
             setViolationTypes(res.data);
@@ -80,7 +81,7 @@ export default function RecordViolationPage() {
 
             // Temporary: Assume QR contains Register Number for simplicity in this prototype if QR not fully mocked?
             // No, let's try strict.
-            const res = await axios.get(`http://localhost:3001/students/qr/${qr}`, {
+            const res = await axios.get(`${API_URL}/students/qr/${qr}`, {
                 headers: { Authorization: `Bearer ${token}` }
             });
             setStudent(res.data);
@@ -88,7 +89,7 @@ export default function RecordViolationPage() {
             // Fallback: maybe QR contains just the ID?
             try {
                 const token = localStorage.getItem("token");
-                const res2 = await axios.get(`http://localhost:3001/students/${qr}`, {
+                const res2 = await axios.get(`${API_URL}/students/${qr}`, {
                     headers: { Authorization: `Bearer ${token}` }
                 });
                 setStudent(res2.data);
@@ -117,7 +118,7 @@ export default function RecordViolationPage() {
             // Let's try `GET /students/register/${manualInput}` (if not exists, I'll add it).
             // Actually `verify-scores.js` used: `GET /students` and filtered.
             // I'll do the same for now to stay safe.
-            const res = await axios.get("http://localhost:3001/students", {
+            const res = await axios.get(`${API_URL}/students`, {
                 headers: { Authorization: `Bearer ${token}` }
             });
             const found = res.data.find((s: Student) =>
@@ -140,7 +141,7 @@ export default function RecordViolationPage() {
 
         try {
             const token = localStorage.getItem("token");
-            await axios.post("http://localhost:3001/violations/record", {
+            await axios.post(`${API_URL}/violations/record`, {
                 studentId: student.id,
                 violationTypeId: selectedViolation,
                 comments

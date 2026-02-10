@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from "react";
 import axios from "axios";
+import { API_URL } from "@/config";
 import { useAuth } from "@/context/auth-context";
 import { SubParameterForm } from "./sub-parameter-form";
 import { FormEditor } from "./form-editor";
@@ -39,7 +40,7 @@ export function ParameterList({ refreshTrigger }: ParameterListProps) {
         const fetchParameters = async () => {
             try {
                 const storedToken = localStorage.getItem('token');
-                const response = await axios.get("http://localhost:3001/parameters", {
+                const response = await axios.get(`${API_URL}/parameters`, {
                     headers: { Authorization: `Bearer ${token || storedToken}` }
                 });
                 setParameters(response.data);
@@ -57,7 +58,7 @@ export function ParameterList({ refreshTrigger }: ParameterListProps) {
         if (!confirm("Are you sure you want to delete this parameter?")) return;
         try {
             const storedToken = localStorage.getItem('token');
-            await axios.delete(`http://localhost:3001/parameters/${id}`, {
+            await axios.delete(`${API_URL}/parameters/${id}`, {
                 headers: { Authorization: `Bearer ${token || storedToken}` }
             });
             setLocalRefresh(prev => prev + 1);
@@ -71,7 +72,7 @@ export function ParameterList({ refreshTrigger }: ParameterListProps) {
         if (!confirm("Are you sure you want to delete this sub-parameter?")) return;
         try {
             const storedToken = localStorage.getItem('token');
-            await axios.delete(`http://localhost:3001/sub-parameters/${id}`, {
+            await axios.delete(`${API_URL}/sub-parameters/${id}`, {
                 headers: { Authorization: `Bearer ${token || storedToken}` }
             });
             setLocalRefresh(prev => prev + 1);

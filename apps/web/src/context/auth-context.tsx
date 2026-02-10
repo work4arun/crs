@@ -2,6 +2,7 @@
 
 import React, { createContext, useContext, useEffect, useState, ReactNode } from 'react';
 import axios from 'axios';
+import { API_URL } from '@/config';
 import { useRouter } from 'next/navigation';
 
 interface User {
@@ -40,7 +41,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
 
     const fetchProfile = async (token: string) => {
         try {
-            const response = await axios.get('http://localhost:3001/auth/profile', {
+            const response = await axios.get(`${API_URL}/auth/profile`, {
                 headers: { Authorization: `Bearer ${token}` }
             });
 
@@ -110,7 +111,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     const logout = async () => {
         try {
             if (token) {
-                await axios.post('http://localhost:3001/auth/logout', {}, {
+                await axios.post(`${API_URL}/auth/logout`, {}, {
                     headers: { Authorization: `Bearer ${token}` }
                 });
             }

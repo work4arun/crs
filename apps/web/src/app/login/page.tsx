@@ -4,6 +4,7 @@ import { useState } from "react";
 import { useAuth } from "@/context/auth-context";
 import { useRouter } from "next/navigation";
 import axios from "axios";
+import { API_URL } from "@/config";
 
 export default function LoginPage() {
     const [email, setEmail] = useState("");
@@ -17,7 +18,7 @@ export default function LoginPage() {
         setError("");
 
         try {
-            const response = await axios.post("http://localhost:3001/auth/login", {
+            const response = await axios.post(`${API_URL}/auth/login`, {
                 email,
                 password,
             });
@@ -28,7 +29,7 @@ export default function LoginPage() {
             // But ideally the login response should return user details too, or we fetch /profile immediately
 
             // Let's fetch profile to be sure
-            const profileResponse = await axios.get("http://localhost:3001/auth/profile", {
+            const profileResponse = await axios.get(`${API_URL}/auth/profile`, {
                 headers: { Authorization: `Bearer ${access_token}` },
             });
 

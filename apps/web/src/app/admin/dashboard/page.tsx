@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from "react";
 import axios from "axios";
+import { API_URL } from "@/config";
 import { useAuth } from "@/context/auth-context";
 import { Users, AlertTriangle, Award, TrendingUp, Activity, GraduationCap } from "lucide-react";
 
@@ -16,7 +17,7 @@ export default function AdminDashboard() {
         const fetchStats = async () => {
             // Use token from context or storage, but handle 401 via interceptor now
             try {
-                const res = await axios.get("http://localhost:3001/analytics/admin-stats", {
+                const res = await axios.get(`${API_URL}/analytics/admin-stats`, {
                     headers: { Authorization: `Bearer ${token || storedToken}` }
                 });
                 setStats(res.data);

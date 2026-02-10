@@ -3,6 +3,7 @@
 import { useState, useEffect, useRef, useCallback } from 'react';
 import { Bell, Check } from 'lucide-react';
 import axios from 'axios';
+import { API_URL } from '@/config';
 
 type Notification = {
     id: string;
@@ -24,7 +25,7 @@ export function NotificationCenter() {
             const token = localStorage.getItem('token');
             if (!token) return;
 
-            const res = await axios.get('http://localhost:3001/notifications', {
+            const res = await axios.get(`${API_URL}/notifications`, {
                 headers: { Authorization: `Bearer ${token}` },
             });
             setNotifications(res.data);
@@ -54,7 +55,7 @@ export function NotificationCenter() {
         e.stopPropagation();
         try {
             const token = localStorage.getItem('token');
-            await axios.patch(`http://localhost:3001/notifications/${id}/read`, {}, {
+            await axios.patch(`${API_URL}/notifications/${id}/read`, {}, {
                 headers: { Authorization: `Bearer ${token}` },
             });
             // Optimistic update

@@ -2,6 +2,7 @@
 
 import { useState } from 'react';
 import axios from 'axios';
+import { API_URL } from '@/config';
 import Link from 'next/link';
 
 export default function ForgotPasswordPage() {
@@ -14,7 +15,7 @@ export default function ForgotPasswordPage() {
         setStatus('loading');
         setMessage(''); // Clear previous messages
         try {
-            const response = await axios.post('http://localhost:3001/auth/forgot-password', { email });
+            const response = await axios.post(`${API_URL}/auth/forgot-password`, { email });
             setStatus('success');
             setMessage(response.data.message);
         } catch (err: unknown) {

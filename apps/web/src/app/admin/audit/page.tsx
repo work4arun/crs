@@ -2,6 +2,7 @@
 
 import { useEffect, useState, useCallback } from "react";
 import axios from "axios";
+import { API_URL } from "@/config";
 import { History } from "lucide-react";
 
 interface AuditLog {
@@ -23,7 +24,7 @@ export default function AuditPage() {
     const fetchLogs = useCallback(async () => {
         try {
             const token = localStorage.getItem("token");
-            const res = await axios.get(`http://localhost:3001/audit?limit=${limit}`, {
+            const res = await axios.get(`${API_URL}/audit?limit=${limit}`, {
                 headers: { Authorization: `Bearer ${token}` }
             });
             setLogs(res.data);

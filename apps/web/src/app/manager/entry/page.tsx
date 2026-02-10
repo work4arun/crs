@@ -3,6 +3,7 @@
 import { useState, useEffect, useCallback } from "react";
 import { useRouter } from "next/navigation";
 import axios from "axios";
+import { API_URL } from "@/config";
 import { StudentSelector } from "@/components/student-selector";
 import { FormRenderer } from "@/components/form-renderer";
 
@@ -46,7 +47,7 @@ export default function DataEntryPage() {
                 router.push("/login");
                 return;
             }
-            const res = await axios.get("http://localhost:3001/parameters", {
+            const res = await axios.get(`${API_URL}/parameters`, {
                 headers: { Authorization: `Bearer ${token}` }
             });
             setParameters(res.data);
@@ -83,7 +84,7 @@ export default function DataEntryPage() {
         try {
             const token = localStorage.getItem("token");
             await axios.post(
-                "http://localhost:3001/scores",
+                `${API_URL}/scores`,
                 {
                     studentId: student.id,
                     subParameterId: selectedSubParam,
@@ -130,7 +131,7 @@ export default function DataEntryPage() {
             try {
                 const token = localStorage.getItem("token");
                 const res = await axios.post(
-                    "http://localhost:3001/scores/bulk-upload",
+                    `${API_URL}/scores/bulk-upload`,
                     bulkData,
                     { headers: { Authorization: `Bearer ${token}` } }
                 );

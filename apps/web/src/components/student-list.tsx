@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from "react";
 import axios from "axios";
+import { API_URL } from "@/config";
 import { useAuth } from "@/context/auth-context";
 import { Edit2, Key } from "lucide-react";
 
@@ -33,7 +34,7 @@ export function StudentList() {
     const fetchStudents = async () => {
         try {
             const storedToken = localStorage.getItem('token');
-            const response = await axios.get("http://localhost:3001/students", {
+            const response = await axios.get(`${API_URL}/students`, {
                 headers: { Authorization: `Bearer ${token || storedToken}` },
             });
             setStudents(response.data);
@@ -58,7 +59,7 @@ export function StudentList() {
         if (!editingStudent) return;
         try {
             const storedToken = localStorage.getItem('token');
-            await axios.patch(`http://localhost:3001/students/${editingStudent.id}`, editForm, {
+            await axios.patch(`${API_URL}/students/${editingStudent.id}`, editForm, {
                 headers: { Authorization: `Bearer ${token || storedToken}` }
             });
             setStudents(students.map(s => s.id === editingStudent.id ? { ...s, ...editForm } as Student : s));
@@ -72,7 +73,7 @@ export function StudentList() {
         if (!passwordStudent) return;
         try {
             const storedToken = localStorage.getItem('token');
-            await axios.post(`http://localhost:3001/students/${passwordStudent.id}/reset-password`,
+            await axios.post(`${API_URL}/students/${passwordStudent.id}/reset-password`,
                 { password: newPassword },
                 { headers: { Authorization: `Bearer ${token || storedToken}` } }
             );

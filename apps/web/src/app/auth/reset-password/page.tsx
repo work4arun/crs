@@ -2,6 +2,7 @@
 
 import { useState, Suspense } from 'react';
 import axios from 'axios';
+import { API_URL } from '@/config';
 import { useRouter, useSearchParams } from 'next/navigation';
 import Link from 'next/link';
 
@@ -32,7 +33,7 @@ function ResetPasswordForm() {
 
         setStatus('loading');
         try {
-            await axios.post('http://localhost:3001/auth/reset-password', { token, newPassword: password });
+            await axios.post(`${API_URL}/auth/reset-password`, { token, newPassword: password });
             setStatus('success');
             setTimeout(() => {
                 router.push('/login');

@@ -2,6 +2,7 @@
 
 import { useState, useEffect } from "react";
 import axios from "axios";
+import { API_URL } from "@/config";
 import { useAuth } from "@/context/auth-context";
 
 interface SubParameterFormProps {
@@ -35,7 +36,7 @@ export function SubParameterForm({ parameterId, onSuccess, onCancel }: SubParame
                 const authToken = token || storedToken;
                 if (!authToken) return;
 
-                const response = await axios.get("http://localhost:3001/users?role=MANAGER", {
+                const response = await axios.get(`${API_URL}/users?role=MANAGER`, {
                     headers: { Authorization: `Bearer ${authToken}` }
                 });
                 setManagers(response.data);
@@ -53,7 +54,7 @@ export function SubParameterForm({ parameterId, onSuccess, onCancel }: SubParame
         setError("");
 
         try {
-            await axios.post("http://localhost:3001/sub-parameters", {
+            await axios.post(`${API_URL}/sub-parameters`, {
                 name,
                 description,
                 weightage: parseFloat(weightage),

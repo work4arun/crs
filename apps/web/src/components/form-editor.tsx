@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from "react";
 import axios from "axios";
+import { API_URL } from "@/config";
 import { FormBuilder, FormField } from "./form-builder";
 import { useAuth } from "@/context/auth-context";
 
@@ -25,7 +26,7 @@ export function FormEditor({ subParameterId, subParameterName, onClose }: FormEd
                 const headers = { Authorization: `Bearer ${token || storedToken}` };
 
                 // Fetch sub-parameter to see if it has a form
-                const response = await axios.get(`http://localhost:3001/sub-parameters/${subParameterId}`, { headers });
+                const response = await axios.get(`${API_URL}/sub-parameters/${subParameterId}`, { headers });
 
                 if (response.data.formTemplate) {
                     setFormId(response.data.formTemplate.id);
@@ -55,13 +56,13 @@ export function FormEditor({ subParameterId, subParameterName, onClose }: FormEd
 
             if (formId) {
                 // Update existing
-                await axios.patch(`http://localhost:3001/forms/${formId}`, {
+                await axios.patch(`${API_URL}/forms/${formId}`, {
                     name,
                     schema,
                 }, { headers });
             } else {
                 // Create new
-                await axios.post(`http://localhost:3001/forms`, {
+                await axios.post(`${API_URL}/forms`, {
                     name,
                     schema,
                     subParameterId,
