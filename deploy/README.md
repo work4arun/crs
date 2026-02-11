@@ -58,3 +58,10 @@ This directory contains scripts to deploy the GrowthCard application to a VPS (U
 
 7.  **Access App**:
     Open your browser and visit `http://<your-vps-ip>`.
+
+8.  **create Super Admin**:
+    To create the initial Super Admin user (Email: `rarunkumar@rathinam.in`, Password: `M07ece007@13Lc01`), run:
+    ```bash
+    # From project root
+    npx ts-node apps/api/prisma/seed.ts
+    ```

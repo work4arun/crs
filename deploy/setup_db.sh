@@ -19,7 +19,7 @@ sudo systemctl enable postgresql
 
 DB_NAME="growthcard"
 DB_USER="growthcard"
-DB_PASS="growthcard123"
+DB_PASS="M07ece00713Lc01Ninja"
 
 echo "Creating database user '$DB_USER' and database '$DB_NAME'..."
 

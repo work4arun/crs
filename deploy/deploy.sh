@@ -23,6 +23,9 @@ npx prisma migrate deploy --schema=apps/api/prisma/schema.prisma
 
 # Build Web App
 echo "Building Web App..."
+set -a
+source .env
+set +a
 npm run build -w apps/web
 
 # Build API App
