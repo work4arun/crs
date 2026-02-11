@@ -48,7 +48,7 @@ export class StudentsService {
   constructor(
     private prisma: PrismaService,
     private crsService: CrsService,
-  ) {}
+  ) { }
 
   async uploadProfilePhoto(userId: string, file: Express.Multer.File) {
     if (!file) throw new BadRequestException('No file uploaded');
@@ -56,18 +56,9 @@ export class StudentsService {
     const student = await this.prisma.student.findUnique({ where: { userId } });
     if (!student) throw new NotFoundException('Student profile not found');
 
-    // Define upload path: ../../apps/web/public/uploads/profile-photos
-    const uploadDir = path.join(
-      __dirname,
-      '..',
-      '..',
-      '..',
-      'apps',
-      'web',
-      'public',
-      'uploads',
-      'profile-photos',
-    );
+    // Define upload path: apps/web/public/uploads/profile-photos
+    // process.cwd() is apps/api, so we go up one level to apps, then to web
+    const uploadDir = path.resolve(process.cwd(), '../web/public/uploads/profile-photos');
 
     // Ensure directory exists
     if (!fs.existsSync(uploadDir)) {
@@ -86,7 +77,7 @@ export class StudentsService {
 
     await this.prisma.student.update({
       where: { id: student.id },
-      data: { profilePhoto: publicUrl },
+      data: { profilePhoto: publicUrl } as any,
     });
 
     return { url: publicUrl };
@@ -326,7 +317,7 @@ export class StudentsService {
         qrCode: student.qrCode,
         // email: student.email // Add if needed by frontend
         email: student.email,
-        profilePhoto: student.profilePhoto,
+        profilePhoto: (student as any).profilePhoto,
       },
       report: report,
       deductions: deductions,

@@ -4,13 +4,14 @@ import { useEffect, useState } from "react";
 import axios from "axios";
 import { API_URL } from "@/config";
 import { useAuth } from "@/context/auth-context";
-import { Edit2, Key } from "lucide-react";
+import { Edit2, Key, Trash2 } from "lucide-react";
 
 interface Student {
     id: string;
     name: string;
     registerNumber: string;
     department: string;
+    section?: string;
     batch: string;
     email: string;
 }
@@ -69,6 +70,20 @@ export function StudentList() {
         }
     };
 
+    const handleDelete = async (student: Student) => {
+        if (!confirm(`Are you sure you want to delete ${student.name} (${student.registerNumber})? This action cannot be undone.`)) return;
+        try {
+            const storedToken = localStorage.getItem('token');
+            await axios.delete(`${API_URL}/students/${student.id}`, {
+                headers: { Authorization: `Bearer ${token || storedToken}` }
+            });
+            setStudents(students.filter(s => s.id !== student.id));
+        } catch (error) {
+            console.error("Failed to delete student", error);
+            alert("Failed to delete student");
+        }
+    };
+
     const handlePasswordSave = async () => {
         if (!passwordStudent) return;
         try {
@@ -97,6 +112,7 @@ export function StudentList() {
                             <th className="p-4 font-semibold text-slate-600 text-sm uppercase">Name</th>
                             <th className="p-4 font-semibold text-slate-600 text-sm uppercase">Reg No</th>
                             <th className="p-4 font-semibold text-slate-600 text-sm uppercase">Department</th>
+                            <th className="p-4 font-semibold text-slate-600 text-sm uppercase">Section</th>
                             <th className="p-4 font-semibold text-slate-600 text-sm uppercase">Batch</th>
                             <th className="p-4 font-semibold text-slate-600 text-sm uppercase">Actions</th>
                         </tr>
@@ -107,6 +123,7 @@ export function StudentList() {
                                 <td className="p-4 font-medium text-slate-800">{student.name}</td>
                                 <td className="p-4 text-slate-600 font-mono text-sm">{student.registerNumber}</td>
                                 <td className="p-4 text-slate-600">{student.department}</td>
+                                <td className="p-4 text-slate-600">{student.section || "-"}</td>
                                 <td className="p-4 text-slate-600">{student.batch}</td>
                                 <td className="p-4 flex gap-2">
                                     <button
@@ -122,6 +139,13 @@ export function StudentList() {
                                         title="Set Password"
                                     >
                                         <Key size={18} />
+                                    </button>
+                                    <button
+                                        onClick={() => handleDelete(student)}
+                                        className="text-slate-400 hover:text-red-600 transition-colors p-1"
+                                        title="Delete Student"
+                                    >
+                                        <Trash2 size={18} />
                                     </button>
                                 </td>
                             </tr>
@@ -145,12 +169,31 @@ export function StudentList() {
                                 />
                             </div>
                             <div>
-                                <label className="block text-sm font-bold text-slate-700 mb-1">Department</label>
+                                <label className="block text-sm font-bold text-slate-700 mb-1">Register Number</label>
                                 <input
                                     className="w-full rounded-lg border-slate-300"
-                                    value={editForm.department || ""}
-                                    onChange={e => setEditForm({ ...editForm, department: e.target.value })}
+                                    value={editForm.registerNumber || ""}
+                                    onChange={e => setEditForm({ ...editForm, registerNumber: e.target.value })}
                                 />
+                            </div>
+                            <div className="grid grid-cols-2 gap-4">
+                                <div>
+                                    <label className="block text-sm font-bold text-slate-700 mb-1">Department</label>
+                                    <input
+                                        className="w-full rounded-lg border-slate-300"
+                                        value={editForm.department || ""}
+                                        onChange={e => setEditForm({ ...editForm, department: e.target.value })}
+                                    />
+                                </div>
+                                <div>
+                                    <label className="block text-sm font-bold text-slate-700 mb-1">Section</label>
+                                    <input
+                                        className="w-full rounded-lg border-slate-300"
+                                        value={editForm.section || ""}
+                                        onChange={e => setEditForm({ ...editForm, section: e.target.value })}
+                                        placeholder="Optional"
+                                    />
+                                </div>
                             </div>
                             <div>
                                 <label className="block text-sm font-bold text-slate-700 mb-1">Batch</label>

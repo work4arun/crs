@@ -20,17 +20,22 @@ import { useAuth } from "@/context/auth-context";
 export default function AdminLayout({ children }: { children: React.ReactNode }) {
     const [isSidebarOpen, setIsSidebarOpen] = useState(true);
     const pathname = usePathname();
-    const { logout } = useAuth();
+    const { logout, user } = useAuth();
 
-    const menuItems = [
-        { name: "Dashboard", href: "/admin/dashboard", icon: LayoutDashboard },
-        { name: "User Management", href: "/admin/users", icon: Users },
-        { name: "Student Profiles", href: "/admin/students", icon: GraduationCap },
-        { name: "Parameters", href: "/admin/parameters", icon: Settings },
-        { name: "Violations Config", href: "/admin/violations", icon: ShieldAlert },
-        { name: "Dashboard Builder", href: "/admin/dashboards/builder", icon: FileBarChart },
-        { name: "Audit Logs", href: "/admin/audit", icon: AlertTriangle },
+    const allMenuItems = [
+        { name: "Dashboard", href: "/admin/dashboard", icon: LayoutDashboard, roles: ["SUPER_ADMIN", "ADMIN", "MANAGER", "HOD"] },
+        { name: "User Management", href: "/admin/users", icon: Users, roles: ["SUPER_ADMIN"] },
+        { name: "Student Profiles", href: "/admin/students", icon: GraduationCap, roles: ["SUPER_ADMIN", "MANAGER", "HOD", "TUTOR"] },
+        { name: "Parameters", href: "/admin/parameters", icon: Settings, roles: ["SUPER_ADMIN"] },
+        { name: "Violations Config", href: "/admin/violations", icon: ShieldAlert, roles: ["SUPER_ADMIN", "HOD"] },
+        { name: "Dashboard Builder", href: "/admin/dashboards/builder", icon: FileBarChart, roles: ["SUPER_ADMIN"] },
+        { name: "Audit Logs", href: "/admin/audit", icon: AlertTriangle, roles: ["SUPER_ADMIN"] },
     ];
+
+    const menuItems = allMenuItems.filter(item => {
+        if (!user?.roles) return false;
+        return item.roles.some(r => user.roles.includes(r));
+    });
 
     return (
         <div className="min-h-screen bg-gray-50 flex">

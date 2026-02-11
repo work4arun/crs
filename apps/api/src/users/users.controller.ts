@@ -3,6 +3,7 @@ import {
   Controller,
   Get,
   Post,
+  Patch,
   Delete,
   Body,
   Param,
@@ -18,7 +19,7 @@ import { Prisma, Role } from '@prisma/client';
 @Controller('users')
 @UseGuards(AuthGuard('jwt'), RolesGuard)
 export class UsersController {
-  constructor(private prisma: PrismaService) {}
+  constructor(private prisma: PrismaService) { }
 
   @Get()
   @Roles('SUPER_ADMIN')
@@ -30,11 +31,23 @@ export class UsersController {
         id: true,
         email: true,
         role: true,
+        department: true,
+        section: true,
         createdAt: true,
       },
       orderBy: { createdAt: 'desc' },
     });
     return users;
+  }
+
+  @Patch(':id/password')
+  @Roles('SUPER_ADMIN')
+  async updatePassword(@Param('id') id: string, @Body() body: { password: string }) {
+    const hashedPassword = await bcrypt.hash(body.password, 10);
+    return this.prisma.user.update({
+      where: { id },
+      data: { password: hashedPassword },
+    });
   }
 
   @Post('check-user')
@@ -48,6 +61,8 @@ export class UsersController {
       exists: !!user,
       email: user?.email,
       role: user?.role,
+      department: user?.department,
+      section: user?.section,
       hasStudentProfile: !!user?.student,
       studentName: user?.student?.name,
     };
@@ -64,6 +79,8 @@ export class UsersController {
         email: data.email,
         password: hashedPassword,
         role: data.role,
+        department: data.department,
+        section: data.section,
       },
     });
     // eslint-disable-next-line @typescript-eslint/no-unused-vars

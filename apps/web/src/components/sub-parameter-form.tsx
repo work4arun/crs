@@ -9,13 +9,15 @@ interface SubParameterFormProps {
     parameterId: string;
     onSuccess: () => void;
     onCancel: () => void;
+    initialData?: any; // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    isEditing?: boolean;
 }
 
-export function SubParameterForm({ parameterId, onSuccess, onCancel }: SubParameterFormProps) {
-    const [name, setName] = useState("");
-    const [description, setDescription] = useState("");
-    const [weightage, setWeightage] = useState("");
-    const [maxScore, setMaxScore] = useState("");
+export function SubParameterForm({ parameterId, onSuccess, onCancel, initialData, isEditing = false }: SubParameterFormProps) {
+    const [name, setName] = useState(initialData?.name || "");
+    const [description, setDescription] = useState(initialData?.description || "");
+    const [weightage, setWeightage] = useState(initialData?.weightage?.toString() || "");
+    const [maxScore, setMaxScore] = useState(initialData?.maxScore?.toString() || "");
 
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState("");
@@ -23,11 +25,11 @@ export function SubParameterForm({ parameterId, onSuccess, onCancel }: SubParame
     const storedToken = typeof window !== 'undefined' ? localStorage.getItem('token') : null;
 
     // New Fields
-    const [scoringMode, setScoringMode] = useState<"ACCUMULATIVE" | "DEDUCTION">("ACCUMULATIVE");
-    const [calculationMode, setCalculationMode] = useState<"SUM" | "LATEST" | "AVERAGE" | "MAX">("LATEST");
-    const [deductionValue, setDeductionValue] = useState("");
-    const [minScore, setMinScore] = useState("0");
-    const [mappedManagerId, setMappedManagerId] = useState("");
+    const [scoringMode, setScoringMode] = useState<"ACCUMULATIVE" | "DEDUCTION">(initialData?.scoringMode || "ACCUMULATIVE");
+    const [calculationMode, setCalculationMode] = useState<"SUM" | "LATEST" | "AVERAGE" | "MAX">(initialData?.calculationMode || "LATEST");
+    const [deductionValue, setDeductionValue] = useState(initialData?.deductionValue?.toString() || "");
+    const [minScore, setMinScore] = useState(initialData?.minScore?.toString() || "0");
+    const [mappedManagerId, setMappedManagerId] = useState(initialData?.mappedManagerId || "");
     const [managers, setManagers] = useState<{ id: string, email: string }[]>([]);
 
     useEffect(() => {
@@ -54,7 +56,7 @@ export function SubParameterForm({ parameterId, onSuccess, onCancel }: SubParame
         setError("");
 
         try {
-            await axios.post(`${API_URL}/sub-parameters`, {
+            const payload = {
                 name,
                 description,
                 weightage: parseFloat(weightage),
@@ -65,14 +67,20 @@ export function SubParameterForm({ parameterId, onSuccess, onCancel }: SubParame
                 deductionValue: scoringMode === "DEDUCTION" ? parseFloat(deductionValue) : undefined,
                 minScore: scoringMode === "DEDUCTION" ? parseFloat(minScore) : undefined,
                 mappedManagerId: mappedManagerId || undefined,
-            }, {
-                headers: { Authorization: `Bearer ${token || storedToken}` }
-            });
+            };
+
+            const headers = { Authorization: `Bearer ${token || storedToken}` };
+
+            if (isEditing && initialData?.id) {
+                await axios.patch(`${API_URL}/sub-parameters/${initialData.id}`, payload, { headers });
+            } else {
+                await axios.post(`${API_URL}/sub-parameters`, payload, { headers });
+            }
 
             onSuccess();
         } catch (err) {
             const errorObj = err as { response?: { data?: { message?: string } }; message?: string };
-            setError(errorObj.response?.data?.message || "Failed to create sub-parameter");
+            setError(errorObj.response?.data?.message || "Failed to save sub-parameter");
         } finally {
             setLoading(false);
         }
@@ -80,7 +88,7 @@ export function SubParameterForm({ parameterId, onSuccess, onCancel }: SubParame
 
     return (
         <div className="bg-gray-50 p-4 rounded mt-4 border border-gray-200">
-            <h4 className="text-sm font-semibold mb-2">Add Sub-Parameter</h4>
+            <h4 className="text-sm font-semibold mb-2">{isEditing ? "Edit Sub-Parameter" : "Add Sub-Parameter"}</h4>
             {error && <p className="text-red-500 text-xs mb-2">{error}</p>}
             <form onSubmit={handleSubmit} className="space-y-3">
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
@@ -225,7 +233,7 @@ export function SubParameterForm({ parameterId, onSuccess, onCancel }: SubParame
                         disabled={loading}
                         className="bg-indigo-600 text-white px-3 py-1 text-xs rounded hover:bg-indigo-700 disabled:bg-gray-400"
                     >
-                        {loading ? "Adding..." : "Add"}
+                        {loading ? "Saving..." : (isEditing ? "Update" : "Add")}
                     </button>
                 </div>
             </form>

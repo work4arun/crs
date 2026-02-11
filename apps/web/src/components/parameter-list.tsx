@@ -13,6 +13,11 @@ interface SubParameter {
     description: string;
     weightage: number;
     maxScore: number;
+    scoringMode: "ACCUMULATIVE" | "DEDUCTION";
+    calculationMode: "SUM" | "LATEST" | "AVERAGE" | "MAX";
+    deductionValue?: number;
+    minScore?: number;
+    mappedManagerId?: string;
 }
 
 interface Parameter {
@@ -32,6 +37,7 @@ export function ParameterList({ refreshTrigger }: ParameterListProps) {
     const [parameters, setParameters] = useState<Parameter[]>([]);
     const [loading, setLoading] = useState(true);
     const [addingSubParamTo, setAddingSubParamTo] = useState<string | null>(null);
+    const [editingSubParamId, setEditingSubParamId] = useState<string | null>(null);
     const [editingFormFor, setEditingFormFor] = useState<{ id: string, name: string } | null>(null);
     const { token } = useAuth();
     const [localRefresh, setLocalRefresh] = useState(0);
@@ -129,22 +135,44 @@ export function ParameterList({ refreshTrigger }: ParameterListProps) {
                                 <div className="mt-3 ml-4 pl-4 border-l-2 border-gray-200">
                                     <ul className="space-y-2">
                                         {param.subParameters.map(sub => (
-                                            <li key={sub.id} className="flex justify-between items-center text-sm">
-                                                <span>{sub.name} <span className="text-gray-400">({sub.weightage}%)</span></span>
-                                                <div className="flex gap-2">
-                                                    <button
-                                                        onClick={() => setEditingFormFor({ id: sub.id, name: sub.name })}
-                                                        className="text-xs text-blue-600 hover:text-blue-800"
-                                                    >
-                                                        Manage Form
-                                                    </button>
-                                                    <button
-                                                        onClick={() => handleSubParamDelete(sub.id)}
-                                                        className="text-gray-500 hover:text-red-600 font-semibold"
-                                                    >
-                                                        Delete
-                                                    </button>
+                                            <li key={sub.id} className="flex flex-col text-sm">
+                                                <div className="flex justify-between items-center">
+                                                    <span>{sub.name} <span className="text-gray-400">({sub.weightage}%)</span></span>
+                                                    <div className="flex gap-2">
+                                                        <button
+                                                            onClick={() => setEditingFormFor({ id: sub.id, name: sub.name })}
+                                                            className="text-xs text-blue-600 hover:text-blue-800"
+                                                        >
+                                                            Manage Form
+                                                        </button>
+                                                        <button
+                                                            onClick={() => setEditingSubParamId(sub.id)}
+                                                            className="text-xs text-orange-600 hover:text-orange-800"
+                                                        >
+                                                            Edit
+                                                        </button>
+                                                        <button
+                                                            onClick={() => handleSubParamDelete(sub.id)}
+                                                            className="text-gray-500 hover:text-red-600 font-semibold"
+                                                        >
+                                                            Delete
+                                                        </button>
+                                                    </div>
                                                 </div>
+
+                                                {/* Edit Sub-Parameter Form */}
+                                                {editingSubParamId === sub.id && (
+                                                    <SubParameterForm
+                                                        parameterId={param.id}
+                                                        initialData={sub}
+                                                        isEditing={true}
+                                                        onSuccess={() => {
+                                                            setEditingSubParamId(null);
+                                                            setLocalRefresh(prev => prev + 1);
+                                                        }}
+                                                        onCancel={() => setEditingSubParamId(null)}
+                                                    />
+                                                )}
                                             </li>
                                         ))}
                                     </ul>
