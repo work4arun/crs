@@ -26,6 +26,7 @@ echo "Building Web App..."
 set -a
 source .env
 set +a
+export NEXT_PUBLIC_API_URL="http://147.79.67.133/api"
 npm run build -w apps/web
 
 # Build API App
