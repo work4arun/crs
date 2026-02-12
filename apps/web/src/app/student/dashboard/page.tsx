@@ -577,35 +577,33 @@ function ModernParamCard({ param, index }: { param: MainParamReport, index: numb
       </div>
 
       {/* Expander / Details preview */}
-      <div className="px-5 pb-5">
-        <div className="space-y-2 pt-3 border-t border-slate-50">
-          {param.subParameters.slice(0, 3).map((sub) => (
+      <div className="px-4 pb-4">
+        <div className="space-y-1.5 pt-3 border-t border-slate-50">
+          {param.subParameters.map((sub) => (
             <motion.div
               key={sub.id}
               whileHover={{
-                scale: 1.05,
-                x: 6,
+                scale: 1.02,
+                x: 4,
                 backgroundColor: "rgba(255,255,255,0.95)",
-                boxShadow: "0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05)",
+                boxShadow: "0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06)",
                 zIndex: 10,
                 borderColor: "rgba(99, 102, 241, 0.3)"
               }}
-              className="flex justify-between items-center text-xs p-2.5 rounded-xl border border-transparent transition-all cursor-default"
+              className="flex justify-between items-center text-xs p-2 rounded-lg border border-transparent transition-all cursor-default"
             >
-              <div className="flex items-center gap-2.5 overflow-hidden">
+              <div className="flex items-center gap-2 overflow-hidden">
                 <div className={`w-1.5 h-1.5 rounded-full shrink-0 ${sub.score > 0 ? "bg-indigo-500" : "bg-slate-300"}`} />
                 <span className={`font-medium truncate ${sub.score > 0 ? 'text-slate-700' : 'text-slate-400'}`}>{sub.name}</span>
               </div>
-              <span className={`font-mono text-[10px] px-2 py-0.5 rounded-md ${sub.score > 0 ? 'bg-indigo-50 text-indigo-600 font-bold' : 'bg-slate-50 text-slate-400'}`}>
+              <span className={`font-mono text-[10px] px-1.5 py-0.5 rounded-md ${sub.score > 0 ? 'bg-indigo-50 text-indigo-600 font-bold' : 'bg-slate-50 text-slate-400'}`}>
                 {sub.score}/{sub.maxScore}
               </span>
             </motion.div>
           ))}
-          {param.subParameters.length > 3 && (
-            <div className="text-[10px] text-indigo-500 font-bold text-center pt-1">+ {param.subParameters.length - 3} more parameters</div>
-          )}
         </div>
       </div>
-    </motion.div>
+    </div>
+    </motion.div >
   )
 }
