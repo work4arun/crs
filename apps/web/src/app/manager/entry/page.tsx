@@ -17,6 +17,7 @@ interface SubParameter {
     id: string;
     name: string;
     maxScore: number;
+    scoringMode?: "ACCUMULATIVE" | "DEDUCTION";
     formTemplate?: {
         // eslint-disable-next-line @typescript-eslint/no-explicit-any
         schema: any;
@@ -241,8 +242,14 @@ export default function DataEntryPage() {
             )}
 
             {entryMode === "single" && student && selectedSubParam && subParamDetails && (
-                <div className="bg-white p-6 rounded shadow">
-                    <h2 className="text-lg font-semibold mb-4">3. Enter Data</h2>
+                <div className="bg-white p-6 rounded shadow border-l-4 border-indigo-500">
+                    <h2 className="text-lg font-bold mb-4 flex items-center gap-2">
+                        3. Enter {subParamDetails.scoringMode === "DEDUCTION" ? "Deduction Details" : "Score Data"}
+                        {subParamDetails.scoringMode === "DEDUCTION" && (
+                            <span className="px-2 py-1 bg-red-100 text-red-700 text-xs rounded-full">Violation Mode</span>
+                        )}
+                    </h2>
+
                     <div className="space-y-6">
                         {/* Form Renderer for JSON Schema */}
                         {subParamDetails.formTemplate && subParamDetails.formTemplate.schema ? (
@@ -257,31 +264,78 @@ export default function DataEntryPage() {
                                     noFormTag={true}
                                 />
                             </div>
-                        ) : (
-                            <p className="text-gray-500 mb-4 italic">No specific form for this parameter. Please enter score directly.</p>
-                        )}
+                        ) : null}
 
-                        {/* Score Input */}
-                        <div className="mb-6">
-                            <label className="block text-sm font-medium text-gray-700 mb-1">
-                                Score (Max: {subParamDetails.maxScore})
-                            </label>
-                            <input
-                                type="number"
-                                max={subParamDetails.maxScore}
-                                className="w-full p-2 border rounded"
-                                value={score}
-                                onChange={(e) => setScore(Number(e.target.value))}
-                                required
-                            />
-                        </div>
+                        {/* DEDUCTION MODE UI */}
+                        {subParamDetails.scoringMode === "DEDUCTION" ? (
+                            <div className="bg-red-50 p-4 rounded-lg border border-red-100 space-y-4">
+                                <p className="text-sm text-red-600">
+                                    <strong>Note:</strong> This parameter starts at <strong>{subParamDetails.maxScore}</strong> points.
+                                    Any value entered below will be <strong>subtracted</strong> from the total.
+                                </p>
+
+                                <div>
+                                    <label className="block text-sm font-bold text-gray-700 mb-1">
+                                        Amount to Deduct
+                                    </label>
+                                    <div className="flex items-center gap-2">
+                                        <span className="text-xl font-bold text-red-500">-</span>
+                                        <input
+                                            type="number"
+                                            min="0"
+                                            // max={subParamDetails.maxScore} // Technically can deduct more than max over time, handled by clamping
+                                            className="w-full p-2 border rounded border-red-200 focus:ring-red-500 focus:border-red-500"
+                                            placeholder="e.g. 5"
+                                            value={score}
+                                            onChange={(e) => setScore(Number(e.target.value))}
+                                            required
+                                        />
+                                    </div>
+                                </div>
+
+                                <div>
+                                    <label className="block text-sm font-medium text-gray-700 mb-1">
+                                        Reason for Deduction <span className="text-red-500">*</span>
+                                    </label>
+                                    <textarea
+                                        className="w-full p-2 border rounded focus:ring-red-500 focus:border-red-500"
+                                        rows={3}
+                                        placeholder="Explain the violation..."
+                                        value={formData.reason || ""}
+                                        onChange={(e) => setFormData({ ...formData, reason: e.target.value })}
+                                        required
+                                    />
+                                </div>
+                            </div>
+                        ) : (
+                            // STANDARD SCORE INPUT
+                            <div className="mb-6">
+                                {!subParamDetails.formTemplate && (
+                                    <p className="text-gray-500 mb-4 italic">No specific form for this parameter. Please enter score directly.</p>
+                                )}
+                                <label className="block text-sm font-medium text-gray-700 mb-1">
+                                    Score (Max: {subParamDetails.maxScore})
+                                </label>
+                                <input
+                                    type="number"
+                                    max={subParamDetails.maxScore}
+                                    className="w-full p-2 border rounded"
+                                    value={score}
+                                    onChange={(e) => setScore(Number(e.target.value))}
+                                    required
+                                />
+                            </div>
+                        )}
 
                         <button
                             type="button"
                             onClick={(e) => handleSubmit(e)}
-                            className="w-full bg-blue-600 text-white py-2 px-4 rounded hover:bg-blue-700 font-medium"
+                            className={`w-full py-3 px-4 rounded font-bold text-white shadow-lg transition-all transform hover:scale-[1.02] ${subParamDetails.scoringMode === "DEDUCTION"
+                                    ? "bg-red-600 hover:bg-red-700 shadow-red-500/30"
+                                    : "bg-indigo-600 hover:bg-indigo-700 shadow-indigo-500/30"
+                                }`}
                         >
-                            Submit Score
+                            {subParamDetails.scoringMode === "DEDUCTION" ? "Record Violation" : "Submit Score"}
                         </button>
                     </div>
                 </div>
