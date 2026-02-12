@@ -40,6 +40,9 @@ interface CrsParameter {
     maxScore: number;
     weightage: number;
     calculationMode: 'LATEST' | 'SUM' | 'AVERAGE' | 'MAX' | null;
+    scoringMode: 'ACCUMULATIVE' | 'DEDUCTION';
+    deductionValue: number | null;
+    minScore: number | null;
   }[];
 }
 
@@ -56,13 +59,25 @@ export class StudentsService {
     const student = await this.prisma.student.findUnique({ where: { userId } });
     if (!student) throw new NotFoundException('Student profile not found');
 
+    // DEBUG: Log paths
+    console.log('--- Upload Trace ---');
+    console.log('CWD:', process.cwd());
+
     // Define upload path: apps/web/public/uploads/profile-photos
     // process.cwd() is apps/api, so we go up one level to apps, then to web
     const uploadDir = path.resolve(process.cwd(), '../web/public/uploads/profile-photos');
+    console.log('Target Upload Dir:', uploadDir);
 
     // Ensure directory exists
-    if (!fs.existsSync(uploadDir)) {
-      fs.mkdirSync(uploadDir, { recursive: true });
+    try {
+      if (!fs.existsSync(uploadDir)) {
+        console.log('Directory does not exist. Creating...');
+        fs.mkdirSync(uploadDir, { recursive: true });
+        console.log('Directory created.');
+      }
+    } catch (err) {
+      console.error('Error creating directory:', err);
+      throw new Error(`Failed to create upload directory: ${err.message}`);
     }
 
     const fileExt = path.extname(file.originalname);
@@ -70,7 +85,13 @@ export class StudentsService {
     const filePath = path.join(uploadDir, fileName);
 
     // Write file
-    await fs.promises.writeFile(filePath, file.buffer);
+    try {
+      await fs.promises.writeFile(filePath, file.buffer);
+      console.log('File written successfully to:', filePath);
+    } catch (err) {
+      console.error('Error writing file:', err);
+      throw new Error(`Failed to write file: ${err.message}`);
+    }
 
     // Update Student Record (Store relative URL for Frontend)
     const publicUrl = `/uploads/profile-photos/${fileName}`;
@@ -416,29 +437,52 @@ export class StudentsService {
           let obtained = 0;
           const max = subParam.maxScore;
 
-          if (subParamScores.length > 0) {
-            if (mode === 'LATEST') {
-              subParamScores.sort(
-                (a, b) =>
-                  new Date(b.createdAt).getTime() -
-                  new Date(a.createdAt).getTime(),
-              );
-              obtained = subParamScores[0].obtainedScore;
-            } else if (mode === 'SUM') {
-              obtained = subParamScores.reduce(
-                (sum, s) => sum + s.obtainedScore,
-                0,
-              );
-            } else if (mode === 'AVERAGE') {
-              const sum = subParamScores.reduce(
-                (sum, s) => sum + s.obtainedScore,
-                0,
-              );
-              obtained = sum / subParamScores.length;
-            } else if (mode === 'MAX') {
-              obtained = Math.max(
-                ...subParamScores.map((s) => s.obtainedScore),
-              );
+          if (subParamScores.length > 0 || (subParam as any).scoringMode === 'DEDUCTION') {
+            // Cast to any because the interface update above might not be fully propagated to the runtime object structure in this context if strict typing issues arise, but locally it should be fine.
+            // Actually, we updated the interface.
+            const isDeduction = (subParam as any).scoringMode === 'DEDUCTION';
+
+            if (isDeduction) {
+              let penalty = 0;
+              if (subParamScores.length > 0) {
+                const dedVal = (subParam as any).deductionValue;
+                if (dedVal && dedVal > 0) {
+                  penalty = subParamScores.length * dedVal;
+                } else {
+                  penalty = subParamScores.reduce((sum, s) => sum + s.obtainedScore, 0);
+                }
+              }
+              obtained = max - penalty;
+              const min = (subParam as any).minScore || 0;
+              if (obtained < min) obtained = min;
+            }
+            else {
+              // ACCUMULATIVE
+              if (subParamScores.length > 0) {
+                if (mode === 'LATEST') {
+                  subParamScores.sort(
+                    (a, b) =>
+                      new Date(b.createdAt).getTime() -
+                      new Date(a.createdAt).getTime(),
+                  );
+                  obtained = subParamScores[0].obtainedScore;
+                } else if (mode === 'SUM') {
+                  obtained = subParamScores.reduce(
+                    (sum, s) => sum + s.obtainedScore,
+                    0,
+                  );
+                } else if (mode === 'AVERAGE') {
+                  const sum = subParamScores.reduce(
+                    (sum, s) => sum + s.obtainedScore,
+                    0,
+                  );
+                  obtained = sum / subParamScores.length;
+                } else if (mode === 'MAX') {
+                  obtained = Math.max(
+                    ...subParamScores.map((s) => s.obtainedScore),
+                  );
+                }
+              }
             }
           }
 

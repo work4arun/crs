@@ -1,13 +1,13 @@
 import { Injectable, Logger } from '@nestjs/common';
 import { PrismaService } from '../prisma/prisma.service';
-import { CalculationMode } from '@prisma/client';
+import { CalculationMode, ScoringMode } from '@prisma/client';
 
 @Injectable()
 export class CrsService {
   private readonly logger = new Logger(CrsService.name);
   //  private readonly BASE_CRS = 1000;
 
-  constructor(private prisma: PrismaService) {}
+  constructor(private prisma: PrismaService) { }
 
   async calculateCrs(studentId: string): Promise<number> {
     const { finalCrs, previousCrs } =
@@ -81,25 +81,49 @@ export class CrsService {
 
         let obtained = 0;
 
-        if (subParamScores.length > 0) {
-          subParamScores.sort(
-            (a, b) =>
-              new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime(),
-          );
+        if (subParam.scoringMode === ScoringMode.DEDUCTION) {
+          // --- DEDUCTION MODE ---
+          // Start with Max Score (e.g., 100) and subtract penalties
+          let penalty = 0;
 
-          if (mode === CalculationMode.LATEST)
-            obtained = subParamScores[0].obtainedScore;
-          else if (mode === CalculationMode.SUM)
-            obtained = subParamScores.reduce(
-              (sum, s) => sum + s.obtainedScore,
-              0,
+          if (subParamScores.length > 0) {
+            if (subParam.deductionValue && subParam.deductionValue > 0) {
+              // Fixed penalty per violation/record
+              penalty = subParamScores.length * subParam.deductionValue;
+            } else {
+              // Variable penalty (sum of recorded scores)
+              penalty = subParamScores.reduce((sum, s) => sum + s.obtainedScore, 0);
+            }
+          }
+
+          obtained = subParam.maxScore - penalty;
+
+          // Clamp to Min Score (default 0)
+          const minScore = subParam.minScore !== null ? subParam.minScore : 0;
+          if (obtained < minScore) obtained = minScore;
+
+        } else {
+          // --- ACCUMULATIVE MODE ---
+          if (subParamScores.length > 0) {
+            subParamScores.sort(
+              (a, b) =>
+                new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime(),
             );
-          else if (mode === CalculationMode.AVERAGE)
-            obtained =
-              subParamScores.reduce((sum, s) => sum + s.obtainedScore, 0) /
-              subParamScores.length;
-          else if (mode === CalculationMode.MAX)
-            obtained = Math.max(...subParamScores.map((s) => s.obtainedScore));
+
+            if (mode === CalculationMode.LATEST)
+              obtained = subParamScores[0].obtainedScore;
+            else if (mode === CalculationMode.SUM)
+              obtained = subParamScores.reduce(
+                (sum, s) => sum + s.obtainedScore,
+                0,
+              );
+            else if (mode === CalculationMode.AVERAGE)
+              obtained =
+                subParamScores.reduce((sum, s) => sum + s.obtainedScore, 0) /
+                subParamScores.length;
+            else if (mode === CalculationMode.MAX)
+              obtained = Math.max(...subParamScores.map((s) => s.obtainedScore));
+          }
         }
 
         let subEfficiency = 0;
