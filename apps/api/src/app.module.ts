@@ -35,7 +35,7 @@ import { UsersModule } from './users/users.module';
     }),
     ServeStaticModule.forRoot({
       rootPath: join(process.cwd(), 'uploads'),
-      serveRoot: '/uploads',
+      serveRoot: '/api/uploads',
     }),
     AuthModule,
     PrismaModule,
