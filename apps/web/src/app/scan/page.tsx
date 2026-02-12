@@ -3,7 +3,7 @@
 import { useState, useEffect } from "react";
 import axios from "axios";
 import { API_URL } from "@/config";
-import { QRScanner } from "@/components/qr-scanner";
+import { QrScanner } from "@/components/qr-scanner";
 
 interface Student {
     id: string;
@@ -75,7 +75,6 @@ export default function RecordViolationPage() {
             // Let's assume for now it's the `qrCode` field in Student model.
             // We'll trust `GET /students?qrCode=...` or similar.
             // Actually `StudentsController.findAll` supports filtering?
-            // Let's assume it supports `?qrCode=${qr}`.
             // I'll check `StudentsService` later. If not, I'll need to update it.
             // For now, let's assume we can search by Register Number via manual input too.
 
@@ -189,7 +188,7 @@ export default function RecordViolationPage() {
                     <>
                         {activeTab === "scan" && (
                             <div className="text-center">
-                                <QRScanner onScan={handleScan} onError={handleError} />
+                                <QrScanner onScan={handleScan} />
                                 <p className="text-sm text-gray-500 mt-2">Point camera at Growth Card QR</p>
                             </div>
                         )}
