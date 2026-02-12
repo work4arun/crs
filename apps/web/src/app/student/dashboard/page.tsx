@@ -6,7 +6,7 @@ import { API_URL } from "@/config";
 import { useAuth } from "@/context/auth-context";
 import {
   LogOut, Star, Camera, Trophy, AlertTriangle, TrendingUp, Printer,
-  LayoutDashboard, User, ChevronDown, Sparkles, GraduationCap, Zap
+  LayoutDashboard, User, ChevronDown, Sparkles, GraduationCap, Zap, Mail
 } from "lucide-react";
 import Image from "next/image";
 import { motion, AnimatePresence, useMotionValue, useTransform, animate } from "framer-motion";
@@ -70,9 +70,13 @@ function AnimatedCounter({ value }: { value: number }) {
 
 function AnimatedBackground() {
   return (
-    <div className="fixed inset-0 pointer-events-none z-0 overflow-hidden">
+    <div className="fixed inset-0 pointer-events-none z-0 overflow-hidden bg-slate-50">
+      {/* 1. Subtle Grid Pattern */}
+      <div className="absolute inset-0 bg-[linear-gradient(to_right,#80808012_1px,transparent_1px),linear-gradient(to_bottom,#80808012_1px,transparent_1px)] bg-[size:24px_24px]"></div>
+
+      {/* 2. Abstract Gradient Blobs */}
       <motion.div
-        className="absolute top-[-20%] left-[-10%] w-[600px] h-[600px] bg-indigo-300/20 rounded-full mix-blend-multiply filter blur-3xl"
+        className="absolute top-[-10%] left-[-10%] w-[700px] h-[700px] bg-blue-400/20 rounded-full mix-blend-multiply filter blur-[100px]"
         animate={{
           x: [0, 50, -30, 0],
           y: [0, 40, 10, 0],
@@ -81,7 +85,7 @@ function AnimatedBackground() {
         transition={{ duration: 15, repeat: Infinity, ease: "easeInOut" }}
       />
       <motion.div
-        className="absolute bottom-[-10%] right-[-10%] w-[500px] h-[500px] bg-purple-300/20 rounded-full mix-blend-multiply filter blur-3xl"
+        className="absolute top-[20%] right-[-10%] w-[600px] h-[600px] bg-indigo-400/20 rounded-full mix-blend-multiply filter blur-[100px]"
         animate={{
           x: [0, -40, 30, 0],
           y: [0, -30, -10, 0],
@@ -90,7 +94,7 @@ function AnimatedBackground() {
         transition={{ duration: 18, repeat: Infinity, ease: "easeInOut", delay: 1 }}
       />
       <motion.div
-        className="absolute top-[20%] right-[10%] w-[400px] h-[400px] bg-pink-300/20 rounded-full mix-blend-multiply filter blur-3xl"
+        className="absolute bottom-[-10%] left-[20%] w-[500px] h-[500px] bg-violet-400/20 rounded-full mix-blend-multiply filter blur-[100px]"
         animate={{
           x: [0, 20, -20, 0],
           y: [0, -40, 20, 0],
@@ -98,6 +102,9 @@ function AnimatedBackground() {
         }}
         transition={{ duration: 12, repeat: Infinity, ease: "easeInOut", delay: 2 }}
       />
+
+      {/* 3. Noise Overlay for Texture */}
+      <div className="absolute inset-0 opacity-[0.03] mix-blend-overlay" style={{ backgroundImage: `url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.65' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)'/%3E%3C/svg%3E")` }}></div>
     </div>
   );
 }
@@ -187,7 +194,7 @@ export default function StudentDashboard() {
             <div className="w-8 h-8 bg-indigo-600 rounded-lg flex items-center justify-center text-white shadow-indigo-200 shadow-lg">
               <GraduationCap size={18} />
             </div>
-            <span className="font-bold text-lg tracking-tight text-slate-800">Growth<span className="text-indigo-600">Card</span></span>
+            <span className="font-bold text-lg tracking-tight text-slate-800">Rathinam <span className="text-indigo-600">GrowthCard</span></span>
           </div>
 
           <div className="flex items-center gap-3">
@@ -252,9 +259,9 @@ export default function StudentDashboard() {
               </div>
 
               <div className="flex flex-wrap justify-center sm:justify-start gap-2">
-                <div className="px-3 py-1 bg-indigo-50 text-indigo-700 rounded-full text-xs font-bold border border-indigo-100 shadow-sm flex items-center gap-1.5">
-                  <GraduationCap size={14} />
-                  Bachelor of Technology
+                <div className="px-3 py-1 bg-indigo-50 text-indigo-700 rounded-full text-xs font-bold border border-indigo-100 shadow-sm flex items-center gap-1.5 break-all">
+                  <Mail size={14} className="shrink-0" />
+                  {data.student.email}
                 </div>
                 <div className="px-3 py-1 bg-purple-50 text-purple-700 rounded-full text-xs font-bold border border-purple-100 shadow-sm flex items-center gap-1.5">
                   <User size={14} />
@@ -262,13 +269,19 @@ export default function StudentDashboard() {
                 </div>
               </div>
 
-              <div className="flex items-center justify-center sm:justify-start gap-1 pt-1">
+              <div className="flex items-center justify-center sm:justify-start gap-1 pt-2 relative z-10">
                 {[1, 2, 3, 4, 5].map(star => (
-                  <Star
-                    key={star}
-                    size={48}
-                    className={star <= data.student.starRating ? "fill-amber-400 text-amber-400 filter drop-shadow-sm" : "fill-slate-100 text-slate-200"}
-                  />
+                  <div key={star} className="relative transform transition-transform hover:scale-110 duration-200">
+                    <Star
+                      size={48}
+                      className={
+                        star <= data.student.starRating
+                          ? "fill-amber-400 text-amber-500 drop-shadow-[0_6px_8px_rgba(245,158,11,0.4)]"
+                          : "fill-slate-100 text-slate-200"
+                      }
+                      strokeWidth={1.5}
+                    />
+                  </div>
                 ))}
                 <span className="text-xs font-bold text-slate-400 ml-2 uppercase tracking-wider">Rating</span>
               </div>
@@ -344,11 +357,11 @@ export default function StudentDashboard() {
 
                 {/* 5. Center Text (Solid Vibrant Color for Visibility) */}
                 <div className="absolute inset-0 flex flex-col items-center justify-center z-20">
-                  <div className="flex items-baseline text-blue-700">
+                  <div className="flex items-baseline text-indigo-900">
                     <span className="text-5xl font-black tracking-tighter drop-shadow-sm filter">
                       <AnimatedCounter value={data.student.currentCrs} />
                     </span>
-                    <sup className="text-3xl font-bold ml-1 text-indigo-700">%</sup>
+                    <sup className="text-3xl font-bold ml-1 text-indigo-900">%</sup>
                   </div>
                 </div>
               </div>

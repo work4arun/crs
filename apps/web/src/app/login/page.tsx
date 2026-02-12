@@ -131,7 +131,7 @@ export default function LoginPage() {
                                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M13 10V3L4 14h7v7l9-11h-7z" />
                                 </svg>
                             </div>
-                            <h1 className="text-4xl font-bold mb-2 tracking-tight">Growth Card</h1>
+                            <h1 className="text-4xl font-bold mb-2 tracking-tight">Rathinam Growth Card</h1>
                             <motion.div
                                 initial={{ width: 0 }}
                                 animate={{ width: 80 }}
