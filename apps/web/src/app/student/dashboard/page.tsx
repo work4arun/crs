@@ -603,7 +603,6 @@ function ModernParamCard({ param, index }: { param: MainParamReport, index: numb
           ))}
         </div>
       </div>
-    </div>
-    </motion.div >
+    </motion.div>
   )
 }
