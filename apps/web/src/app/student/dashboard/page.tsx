@@ -225,6 +225,12 @@ export default function StudentDashboard() {
           <motion.div
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
+            whileHover={{
+              y: -4,
+              borderColor: "#008F8C",
+              boxShadow: "0 20px 40px -10px rgba(0, 143, 140, 0.3), 0 0 20px 0px rgba(0, 143, 140, 0.1)",
+              transition: { duration: 0.3, ease: "easeOut" }
+            }}
             className="md:col-span-2 bg-white/60 backdrop-blur-2xl rounded-3xl p-6 border border-white/60 shadow-[0_8px_30px_rgb(0,0,0,0.04)] flex flex-col sm:flex-row items-center sm:items-start gap-6 relative overflow-hidden group"
           >
             {/* Decorative gradients */}
@@ -232,7 +238,7 @@ export default function StudentDashboard() {
 
             <div className="relative cursor-pointer" onClick={handlePhotoClick}>
               <input type="file" ref={fileInputRef} className="hidden" accept="image/*" onChange={handleFileChange} />
-              <div className="w-32 h-32 rounded-2xl overflow-hidden shadow-lg border-4 border-white ring-1 ring-slate-100 relative group/img">
+              <div className="w-40 h-40 rounded-full overflow-hidden shadow-lg border-4 border-white ring-1 ring-slate-100 relative group/img">
                 <Image
                   src={
                     data.student.profilePhoto
@@ -242,8 +248,8 @@ export default function StudentDashboard() {
                       : `https://api.dicebear.com/7.x/initials/svg?seed=${data.student.name}`
                   }
                   alt="Profile"
-                  width={128}
-                  height={128}
+                  width={160}
+                  height={160}
                   className="w-full h-full object-cover transition-transform duration-500 group-hover/img:scale-110"
                   unoptimized
                 />
@@ -299,6 +305,12 @@ export default function StudentDashboard() {
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 0.1 }}
+            whileHover={{
+              y: -4,
+              borderColor: "#008F8C",
+              boxShadow: "0 20px 40px -10px rgba(0, 143, 140, 0.3), 0 0 20px 0px rgba(0, 143, 140, 0.1)",
+              transition: { duration: 0.3, ease: "easeOut" }
+            }}
             className="rounded-3xl p-6 relative overflow-hidden flex flex-col items-center justify-center min-h-[320px] bg-white/40 backdrop-blur-2xl border border-white/40 shadow-[0_8px_30px_rgb(0,0,0,0.04)]"
           >
             <div className="relative z-10 flex flex-col items-center justify-between h-full py-2">
@@ -421,6 +433,12 @@ export default function StudentDashboard() {
               initial={{ opacity: 0, x: 20 }}
               animate={{ opacity: 1, x: 0 }}
               transition={{ delay: 0.4 }}
+              whileHover={{
+                y: -4,
+                borderColor: "#008F8C",
+                boxShadow: "0 20px 40px -10px rgba(0, 143, 140, 0.3), 0 0 20px 0px rgba(0, 143, 140, 0.1)",
+                transition: { duration: 0.3, ease: "easeOut" }
+              }}
               className="bg-white/60 backdrop-blur-2xl rounded-3xl border border-white/60 shadow-[0_8px_30px_rgb(0,0,0,0.04)] p-6 h-full flex flex-col"
             >
               <div className="flex items-center gap-3 mb-6">
@@ -503,13 +521,25 @@ function ModernParamCard({ param, index }: { param: MainParamReport, index: numb
 
   const variant = getVariant(param.percentage);
 
+  const glowColor = variant.color === 'teal' ? 'rgba(0, 143, 140, 0.5)' :
+    variant.color === 'blue' ? 'rgba(37, 99, 235, 0.5)' :
+      'rgba(148, 163, 184, 0.5)';
+  const hoverBorder = variant.color === 'teal' ? '#008F8C' :
+    variant.color === 'blue' ? '#2563eb' :
+      '#94a3b8';
+
   return (
     <motion.div
       initial={{ opacity: 0, y: 20 }}
       animate={{ opacity: 1, y: 0 }}
       transition={{ delay: 0.2 + (index * 0.1) }}
-      whileHover={{ y: -5, transition: { type: "spring", stiffness: 300 } }}
-      className="group bg-white/60 backdrop-blur-2xl rounded-2xl border border-white/60 shadow-[0_8px_30px_rgb(0,0,0,0.04)] hover:shadow-[0_8px_30px_rgba(99,102,241,0.15)] transition-all duration-300 relative overflow-hidden"
+      whileHover={{
+        y: -5,
+        borderColor: hoverBorder,
+        boxShadow: `0 20px 40px -10px ${glowColor}, 0 0 15px 0px ${glowColor}`,
+        transition: { duration: 0.3, ease: "easeOut" }
+      }}
+      className="group bg-white/60 backdrop-blur-2xl rounded-2xl border border-white/60 shadow-[0_8px_30px_rgb(0,0,0,0.04)] transition-all duration-300 relative overflow-hidden"
     >
       {/* Hover Gradient Effect */}
       <div className="absolute inset-0 bg-gradient-to-br from-white/0 via-white/0 to-indigo-50/60 opacity-0 group-hover:opacity-100 transition-opacity duration-500 pointer-events-none"></div>
@@ -543,9 +573,9 @@ function ModernParamCard({ param, index }: { param: MainParamReport, index: numb
           </div>
 
           <div className="flex items-center gap-2 mt-2">
-            <div className="px-2 py-1 bg-[#008F8C]/10 rounded-lg text-xs font-bold flex items-center gap-1">
-              <Zap size={10} className="text-[#008F8C]" fill="currentColor" />
-              <span className="bg-gradient-to-r from-blue-700 to-indigo-700 bg-clip-text text-transparent">
+            <div className="px-2 py-1 bg-[#0000ff]/10 rounded-lg text-xs font-bold flex items-center gap-1">
+              <Zap size={10} className="text-[#0000ff]" fill="currentColor" />
+              <span className="text-[#0000ff]">
                 +{param.contribution} pts
               </span>
             </div>
@@ -557,8 +587,8 @@ function ModernParamCard({ param, index }: { param: MainParamReport, index: numb
           <svg className="w-full h-full transform -rotate-90" viewBox="0 0 100 100">
             <defs>
               <linearGradient id={`blueGradient-${index}`} x1="0%" y1="0%" x2="100%" y2="0%">
-                <stop offset="0%" stopColor="#2563eb" /> {/* Blue 600 */}
-                <stop offset="100%" stopColor="#4338ca" /> {/* Indigo 700 */}
+                <stop offset="0%" stopColor="#0000ff" />
+                <stop offset="100%" stopColor="#0000ff" />
               </linearGradient>
             </defs>
             <circle cx="50" cy="50" r="45" stroke="#f1f5f9" strokeWidth="8" fill="none" />
@@ -575,7 +605,7 @@ function ModernParamCard({ param, index }: { param: MainParamReport, index: numb
             />
           </svg>
           <div className="absolute inset-0 flex items-center justify-center">
-            <span className="font-black text-sm bg-gradient-to-r from-blue-700 to-indigo-700 bg-clip-text text-transparent">
+            <span className="font-black text-sm text-[#0000ff]">
               {param.percentage.toFixed(0)}%
             </span>
           </div>
@@ -602,7 +632,7 @@ function ModernParamCard({ param, index }: { param: MainParamReport, index: numb
                 <div className={`w-1.5 h-1.5 rounded-full shrink-0 ${sub.score > 0 ? "bg-indigo-500" : "bg-slate-300"}`} />
                 <span className={`font-medium truncate ${sub.score > 0 ? 'text-slate-700' : 'text-slate-400'}`}>{sub.name}</span>
               </div>
-              <span className={`font-mono text-[10px] px-1.5 py-0.5 rounded-md ${sub.score > 0 ? 'bg-indigo-50 text-indigo-600 font-bold' : 'bg-slate-50 text-slate-400'}`}>
+              <span className={`font-mono text-[10px] px-1.5 py-0.5 rounded-md ${sub.score > 0 ? 'bg-[#0000ff]/10 text-[#0000ff] font-bold' : 'bg-slate-50 text-slate-400'}`}>
                 {sub.score}/{sub.maxScore}
               </span>
             </motion.div>
