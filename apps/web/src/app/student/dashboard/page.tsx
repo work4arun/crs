@@ -173,10 +173,10 @@ export default function StudentDashboard() {
   };
 
   if (loading) return (
-    <div className="min-h-screen flex items-center justify-center bg-indigo-50/50">
+    <div className="min-h-screen flex items-center justify-center bg-[#008F8C]/10">
       <div className="flex flex-col items-center gap-4">
-        <div className="w-12 h-12 border-4 border-indigo-200 border-t-indigo-600 rounded-full animate-spin"></div>
-        <p className="text-indigo-600 font-medium animate-pulse">Loading Dashboard...</p>
+        <div className="w-12 h-12 border-4 border-[#008F8C]/30 border-t-[#008F8C] rounded-full animate-spin"></div>
+        <p className="text-[#008F8C] font-medium animate-pulse">Loading Dashboard...</p>
       </div>
     </div>
   );
@@ -184,23 +184,23 @@ export default function StudentDashboard() {
   if (!data) return <div className="min-h-screen flex items-center justify-center text-slate-500">Failed to load data.</div>;
 
   return (
-    <div className="min-h-screen bg-slate-50/80 font-sans text-slate-800 selection:bg-indigo-100 selection:text-indigo-900 relative">
+    <div className="min-h-screen bg-slate-50/80 font-sans text-slate-800 selection:bg-[#008F8C]/20 selection:text-[#008F8C] relative">
       <AnimatedBackground />
 
       {/* --- Sticky Glass Header --- */}
       <header className="sticky top-0 z-40 w-full backdrop-blur-2xl bg-white/40 border-b border-white/40 shadow-sm supports-[backdrop-filter]:bg-white/20">
         <div className="max-w-7xl mx-auto px-4 h-16 flex items-center justify-between">
           <div className="flex items-center gap-2">
-            <div className="w-8 h-8 bg-indigo-600 rounded-lg flex items-center justify-center text-white shadow-indigo-200 shadow-lg">
+            <div className="w-8 h-8 bg-[#008F8C] rounded-lg flex items-center justify-center text-white shadow-[#008F8C]/30 shadow-lg">
               <GraduationCap size={18} />
             </div>
-            <span className="font-bold text-lg tracking-tight text-slate-800">Rathinam <span className="text-indigo-600">GrowthCard</span></span>
+            <span className="font-bold text-lg tracking-tight text-slate-800">Rathinam <span className="text-[#008F8C]">GrowthCard</span></span>
           </div>
 
           <div className="flex items-center gap-3">
             <button
               onClick={() => window.open('/student/report', '_blank')}
-              className="hidden sm:flex items-center gap-2 px-3 py-1.5 text-sm font-medium text-slate-600 hover:text-indigo-600 hover:bg-indigo-50 rounded-full transition-colors"
+              className="hidden sm:flex items-center gap-2 px-3 py-1.5 text-sm font-medium text-slate-600 hover:text-[#008F8C] hover:bg-[#008F8C]/10 rounded-full transition-colors"
             >
               <Printer size={16} />
               <span>Report</span>
@@ -265,7 +265,7 @@ export default function StudentDashboard() {
               </div>
 
               <div className="flex flex-wrap justify-center sm:justify-start gap-2">
-                <div className="px-3 py-1 bg-indigo-50 text-indigo-700 rounded-full text-xs font-bold border border-indigo-100 shadow-sm flex items-center gap-1.5 break-all">
+                <div className="px-3 py-1 bg-[#008F8C]/10 text-[#008F8C] rounded-full text-xs font-bold border border-[#008F8C]/20 shadow-sm flex items-center gap-1.5 break-all">
                   <Mail size={14} className="shrink-0" />
                   {data.student.email}
                 </div>
@@ -396,7 +396,7 @@ export default function StudentDashboard() {
             {/* Header */}
             <div className="flex items-center justify-between">
               <h2 className="text-xl font-bold text-slate-800 flex items-center gap-2">
-                <LayoutDashboard className="text-indigo-600" size={24} />
+                <LayoutDashboard className="text-[#008F8C]" size={24} />
                 Performance Breakdown
               </h2>
               {data.deductions.total > 0 && (
@@ -424,7 +424,7 @@ export default function StudentDashboard() {
               className="bg-white/60 backdrop-blur-2xl rounded-3xl border border-white/60 shadow-[0_8px_30px_rgb(0,0,0,0.04)] p-6 h-full flex flex-col"
             >
               <div className="flex items-center gap-3 mb-6">
-                <div className="p-2.5 bg-indigo-50 text-indigo-600 rounded-xl">
+                <div className="p-2.5 bg-[#008F8C]/10 text-[#008F8C] rounded-xl">
                   <TrendingUp size={20} />
                 </div>
                 <div>
@@ -496,7 +496,7 @@ export default function StudentDashboard() {
 // --- Modern Card Component ---
 function ModernParamCard({ param, index }: { param: MainParamReport, index: number }) {
   const getVariant = (p: number) => {
-    if (p >= 80) return { color: "indigo", text: "text-indigo-700", bg: "bg-indigo-50", stroke: "#4338ca" };
+    if (p >= 80) return { color: "teal", text: "text-[#008F8C]", bg: "bg-[#008F8C]/10", stroke: "#008F8C" };
     if (p >= 50) return { color: "blue", text: "text-blue-700", bg: "bg-blue-50", stroke: "#2563eb" };
     return { color: "slate", text: "text-slate-700", bg: "bg-slate-50", stroke: "#475569" };
   };
@@ -543,8 +543,8 @@ function ModernParamCard({ param, index }: { param: MainParamReport, index: numb
           </div>
 
           <div className="flex items-center gap-2 mt-2">
-            <div className="px-2 py-1 bg-indigo-50 rounded-lg text-xs font-bold flex items-center gap-1">
-              <Zap size={10} className="text-indigo-600" fill="currentColor" />
+            <div className="px-2 py-1 bg-[#008F8C]/10 rounded-lg text-xs font-bold flex items-center gap-1">
+              <Zap size={10} className="text-[#008F8C]" fill="currentColor" />
               <span className="bg-gradient-to-r from-blue-700 to-indigo-700 bg-clip-text text-transparent">
                 +{param.contribution} pts
               </span>
