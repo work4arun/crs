@@ -63,9 +63,9 @@ export class StudentsService {
     console.log('--- Upload Trace ---');
     console.log('CWD:', process.cwd());
 
-    // Define upload path: apps/web/public/uploads/profile-photos
-    // process.cwd() is apps/api, so we go up one level to apps, then to web
-    const uploadDir = path.resolve(process.cwd(), '../web/public/uploads/profile-photos');
+    // Updated Upload Logic: Store in API's local 'uploads' directory
+    // This avoids dependency on Web app's structure and works better in Docker/Prod.
+    const uploadDir = path.join(process.cwd(), 'uploads', 'profile-photos');
     console.log('Target Upload Dir:', uploadDir);
 
     // Ensure directory exists
@@ -93,7 +93,8 @@ export class StudentsService {
       throw new Error(`Failed to write file: ${err.message}`);
     }
 
-    // Update Student Record (Store relative URL for Frontend)
+    // Update Student Record 
+    // URL will be /uploads/profile-photos/filename (served by API)
     const publicUrl = `/uploads/profile-photos/${fileName}`;
 
     await this.prisma.student.update({

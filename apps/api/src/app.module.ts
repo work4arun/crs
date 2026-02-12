@@ -30,7 +30,12 @@ import { UsersModule } from './users/users.module';
     ]),
     ServeStaticModule.forRoot({
       rootPath: join(__dirname, '..', '..', '..', 'apps', 'web', 'public'),
-      serveRoot: '/',
+      serveRoot: '/static', // Moved web public to /static to avoid conflict if needed, or keep as is?
+      // Actually, my plan said: "Import ServeStaticModule to serve uploads from apps/api/uploads at /api/uploads"
+    }),
+    ServeStaticModule.forRoot({
+      rootPath: join(process.cwd(), 'uploads'),
+      serveRoot: '/uploads',
     }),
     AuthModule,
     PrismaModule,
@@ -56,4 +61,4 @@ import { UsersModule } from './users/users.module';
     },
   ],
 })
-export class AppModule {}
+export class AppModule { }

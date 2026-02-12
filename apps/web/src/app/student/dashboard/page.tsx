@@ -234,7 +234,13 @@ export default function StudentDashboard() {
               <input type="file" ref={fileInputRef} className="hidden" accept="image/*" onChange={handleFileChange} />
               <div className="w-32 h-32 rounded-2xl overflow-hidden shadow-lg border-4 border-white ring-1 ring-slate-100 relative group/img">
                 <Image
-                  src={data.student.profilePhoto ? data.student.profilePhoto : `https://api.dicebear.com/7.x/initials/svg?seed=${data.student.name}`}
+                  src={
+                    data.student.profilePhoto
+                      ? (data.student.profilePhoto.startsWith('/uploads') || data.student.profilePhoto.startsWith('/static')
+                        ? `${API_URL}${data.student.profilePhoto}`
+                        : data.student.profilePhoto)
+                      : `https://api.dicebear.com/7.x/initials/svg?seed=${data.student.name}`
+                  }
                   alt="Profile"
                   width={128}
                   height={128}
