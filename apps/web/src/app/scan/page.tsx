@@ -188,7 +188,7 @@ export default function RecordViolationPage() {
                     <>
                         {activeTab === "scan" && (
                             <div className="text-center">
-                                <QrScanner onScan={handleScan} />
+                                <QrScanner onScan={handleScan} onClose={() => setActiveTab("manual")} />
                                 <p className="text-sm text-gray-500 mt-2">Point camera at Growth Card QR</p>
                             </div>
                         )}
