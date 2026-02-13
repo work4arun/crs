@@ -240,18 +240,22 @@ export default function StudentDashboard() {
               <input type="file" ref={fileInputRef} className="hidden" accept="image/*" onChange={handleFileChange} />
               <div className="w-40 h-40 rounded-full overflow-hidden shadow-lg border-4 border-white ring-1 ring-slate-100 relative group/img">
                 <Image
-                  src={
-                    data.student.profilePhoto
+                  src={(() => {
+                    const photoUrl = data.student.profilePhoto
                       ? (data.student.profilePhoto.startsWith('/uploads') || data.student.profilePhoto.startsWith('/static')
                         ? `${API_URL}${data.student.profilePhoto}`
                         : data.student.profilePhoto)
-                      : `https://api.dicebear.com/7.x/initials/svg?seed=${data.student.name}`
-                  }
+                      : `https://api.dicebear.com/7.x/initials/svg?seed=${data.student.name}`;
+                    console.log('Profile Photo URL:', photoUrl, 'Raw path:', data.student.profilePhoto, 'API_URL:', API_URL);
+                    return photoUrl;
+                  })()}
                   alt="Profile"
                   width={160}
                   height={160}
                   className="w-full h-full object-cover transition-transform duration-500 group-hover/img:scale-110"
-                  unoptimized
+                  onError={(e) => {
+                    console.error('Image load error:', e.currentTarget.src);
+                  }}
                 />
                 {uploading && (
                   <div className="absolute inset-0 bg-black/40 flex items-center justify-center">
