@@ -18,9 +18,12 @@ async function bootstrap() {
       'http://147.79.67.133',
       'http://147.79.67.133:3000',
       'http://147.79.67.133:3001',
+      'https://rathinam.site',
+      'https://www.rathinam.site',
     ],
     credentials: true,
   });
+
   app.setGlobalPrefix('api');
   // Use the global exception filter
   const httpAdapter = app.get(HttpAdapterHost);
