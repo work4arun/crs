@@ -13,6 +13,11 @@ git pull origin main
 echo "Installing dependencies..."
 npm install
 
+# Load environment variables
+set -a
+source .env
+set +a
+
 # Generate Prisma Client
 echo "Generating Prisma Client..."
 npx prisma generate --schema=apps/api/prisma/schema.prisma
@@ -23,9 +28,6 @@ npx prisma migrate deploy --schema=apps/api/prisma/schema.prisma
 
 # Build Web App
 echo "Building Web App..."
-set -a
-source .env
-set +a
 export NEXT_PUBLIC_API_URL="http://147.79.67.133/api"
 npm run build -w apps/web
 
