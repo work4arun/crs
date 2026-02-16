@@ -28,6 +28,7 @@ npx prisma migrate deploy --schema=apps/api/prisma/schema.prisma
 
 # Build Web App
 echo "Building Web App..."
+
 export NEXT_PUBLIC_API_URL="http://147.79.67.133/api"
 npm run build -w apps/web
 
