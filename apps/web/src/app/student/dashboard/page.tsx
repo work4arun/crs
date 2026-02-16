@@ -293,29 +293,18 @@ export default function StudentDashboard() {
               <div className="absolute inset-[4%] w-[92%] h-[92%]">
                 <svg className="w-full h-full transform -rotate-90" viewBox="0 0 100 100">
                   {/* Gradient Definition */}
-                  <defs>
-                    <linearGradient id="crsProgressGradient" x1="0%" y1="0%" x2="100%" y2="100%">
-                      <stop offset="0%" stopColor="#4285F4" />
-                      <stop offset="50%" stopColor="#8AB4F8" />
-                      <stop offset="100%" stopColor="#34A853" />
-                    </linearGradient>
-                  </defs>
-
-                  {/* Background Track */}
-                  <circle cx="50" cy="50" r="44" fill="none" stroke="#f1f3f4" strokeWidth="5" strokeLinecap="round" />
-
                   {/* Animated Progress Arc */}
                   <motion.circle
                     cx="50" cy="50" r="44"
                     fill="none"
-                    stroke="url(#crsProgressGradient)"
-                    strokeWidth="5"
+                    stroke={data.student.currentCrs >= 80 ? "#34A853" : data.student.currentCrs >= 40 ? "#FBBC04" : "#EA4335"}
+                    strokeWidth="3"
                     strokeLinecap="round"
                     strokeDasharray="276" // 2 * PI * 44 ~= 276.46
                     initial={{ strokeDashoffset: 276 }}
                     animate={{ strokeDashoffset: 276 - (276 * (data.student.currentCrs / 100)) }}
                     transition={{ duration: 2, ease: "easeOut", delay: 0.2 }}
-                    className="drop-shadow-[0_0_4px_rgba(66,133,244,0.4)]"
+                    className="drop-shadow-[0_0_4px_rgba(0,0,0,0.1)]"
                   />
                 </svg>
               </div>
@@ -333,36 +322,31 @@ export default function StudentDashboard() {
                 animate={{ rotate: 360 }}
                 transition={{ duration: 12, repeat: Infinity, ease: "linear" }}
               >
-                <div className="w-2 h-2 rounded-full bg-green-400 shadow-[0_0_10px_#34A853] absolute top-[-2%] left-1/2 transform -translate-x-1/2"></div>
+                <div className="w-2 h-2 rounded-full bg-[#4285F4] shadow-[0_0_10px_#4285F4] absolute top-[-2%] left-1/2 transform -translate-x-1/2"></div>
               </motion.div>
 
               {/* --- 5. Center Content --- */}
               <div className="absolute flex flex-col items-center justify-center z-10 w-full h-full pb-2">
-                <div className="flex flex-col items-center justify-center">
+                <motion.div
+                  initial={{ scale: 0.8, opacity: 0 }}
+                  animate={{ scale: 1, opacity: 1 }}
+                  transition={{ delay: 0.5 }}
+                  className="flex flex-col items-center justify-center bg-white rounded-full w-40 h-40 shadow-[0_8px_30px_rgb(0,0,0,0.12)] border border-slate-100 z-20"
+                >
                   {/* Value with Superscript % */}
-                  <div className="flex items-start">
-                    <span className="text-[3.5rem] font-bold text-[#202124] tracking-tighter tabular-nums leading-none">
+                  <div className="flex items-start mt-2">
+                    <span className="text-[2.5rem] font-bold text-[#202124] tracking-tighter tabular-nums leading-none">
                       <AnimatedCounter value={data.student.currentCrs} />
                     </span>
-                    <span className="text-xl font-bold text-[#5f6368] mt-2 ml-1">%</span>
+                    <span className="text-lg font-bold text-[#5f6368] mt-1 ml-0.5">%</span>
                   </div>
 
                   {/* Divider */}
-                  <div className="h-0.5 w-8 bg-slate-200 rounded-full my-3"></div>
+                  <div className="h-0.5 w-8 bg-slate-100 rounded-full my-2"></div>
 
                   {/* Label: CRS (Bold, Strong) */}
-                  <span className="text-xl font-black text-[#202124] tracking-widest uppercase mb-3">CRS</span>
-
-                  {/* Bottom Progress Bar (Visual Only) */}
-                  <div className="w-24 h-1.5 bg-slate-100 rounded-full overflow-hidden">
-                    <motion.div
-                      className="h-full bg-gradient-to-r from-[#4285F4] to-[#34A853]"
-                      initial={{ width: 0 }}
-                      animate={{ width: `${data.student.currentCrs}%` }}
-                      transition={{ duration: 1.5, delay: 0.5 }}
-                    />
-                  </div>
-                </div>
+                  <span className="text-lg font-black text-[#5f6368] tracking-widest uppercase">CRS</span>
+                </motion.div>
               </div>
             </div>
           </motion.div>

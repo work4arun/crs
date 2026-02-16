@@ -6,6 +6,8 @@ import axios from "axios";
 import { API_URL } from "@/config";
 import { StudentSelector } from "@/components/student-selector";
 import { FormRenderer } from "@/components/form-renderer";
+import { useAuth } from "@/context/auth-context";
+import { LogOut } from "lucide-react";
 
 interface Parameter {
     id: string;
@@ -26,6 +28,7 @@ interface SubParameter {
 
 export default function DataEntryPage() {
     const router = useRouter();
+    const { logout } = useAuth();
     const [entryMode, setEntryMode] = useState<"single" | "bulk">("single");
     const [bulkFile, setBulkFile] = useState<File | null>(null);
 
@@ -166,6 +169,14 @@ export default function DataEntryPage() {
                         className={`px-4 py-2 rounded-md transition-all ${entryMode === "bulk" ? "bg-white shadow text-indigo-600" : "text-gray-500 hover:text-gray-700"}`}
                     >
                         Bulk Upload
+                    </button>
+                    <div className="w-px h-6 bg-gray-300 mx-1 self-center"></div>
+                    <button
+                        onClick={logout}
+                        className="px-3 py-2 text-red-600 hover:bg-red-50 rounded-md transition-colors flex items-center gap-1"
+                        title="Logout"
+                    >
+                        <LogOut size={16} />
                     </button>
                 </div>
             </div>
@@ -331,8 +342,8 @@ export default function DataEntryPage() {
                             type="button"
                             onClick={(e) => handleSubmit(e)}
                             className={`w-full py-3 px-4 rounded font-bold text-white shadow-lg transition-all transform hover:scale-[1.02] ${subParamDetails.scoringMode === "DEDUCTION"
-                                    ? "bg-red-600 hover:bg-red-700 shadow-red-500/30"
-                                    : "bg-indigo-600 hover:bg-indigo-700 shadow-indigo-500/30"
+                                ? "bg-red-600 hover:bg-red-700 shadow-red-500/30"
+                                : "bg-indigo-600 hover:bg-indigo-700 shadow-indigo-500/30"
                                 }`}
                         >
                             {subParamDetails.scoringMode === "DEDUCTION" ? "Record Violation" : "Submit Score"}
