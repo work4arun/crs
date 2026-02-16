@@ -16,29 +16,6 @@ git pull origin main
 echo "📦 Installing dependencies..."
 npm install
 
-<<<<<<< HEAD
-# Load environment variables
-set -a
-source .env
-set +a
-
-# Generate Prisma Client
-echo "Generating Prisma Client..."
-npx prisma generate --schema=apps/api/prisma/schema.prisma
-
-# Run Migrations
-echo "Running Migrations..."
-npx prisma migrate deploy --schema=apps/api/prisma/schema.prisma
-
-# Build Web App
-echo "Building Web App..."
-
-export NEXT_PUBLIC_API_URL="http://147.79.67.133/api"
-npm run build -w apps/web
-
-# Build API App
-echo "Building API App..."
-=======
 # 3. Database Migrations (Safe)
 # We go into apps/api so it finds the .env file automatically
 echo "🗄️ Running Database Migrations..."
@@ -51,7 +28,6 @@ cd ../..
 
 # 4. Build Applications
 echo "🏗️ Building API..."
->>>>>>> b1823bd (v37)
 npm run build -w apps/api
 
 echo "🏗️ Building Web App..."
