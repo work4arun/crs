@@ -2,7 +2,7 @@ const axios = require('axios');
 
 const API_URL = 'http://localhost:3000';
 const EMAIL = 'rarunkumar@rathinam.in';
-const PASSWORD = 'M07ece007@13Lc01';
+const PASSWORD = 'XxxxxXXXxxxxXXX';
 
 async function verifyLogin() {
     try {
